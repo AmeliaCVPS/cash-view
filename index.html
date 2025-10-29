@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cash View - Dashboard</title>
+    <link rel="stylesheet" href="styles/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <span class="logo">💰</span>
+                <span class="brand-name">Cash View</span>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="index.html" class="nav-link active">Início</a></li>
+                <li><a href="about.html" class="nav-link">Sobre Nós</a></li>
+                <li><span class="user-name" id="userName"></span></li>
+                <li><button class="btn-logout" id="btnLogout">Sair</button></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Dashboard -->
+    <main class="dashboard">
+        <div class="container">
+            <!-- Header -->
+            <header class="dashboard-header">
+                <h1>Cash View — Visualize seu Dinheiro</h1>
+                <p class="subtitle">Transforme o invisível em visível. Tome decisões financeiras conscientes.</p>
+            </header>
+
+            <!-- Cards Grid -->
+            <div class="cards-grid">
+                <!-- Saldo Atual -->
+                <div class="card card-balance">
+                    <div class="card-header">
+                        <h3>💵 Saldo Atual</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="balance-amount" id="currentBalance">R$ 0,00</div>
+                        <div class="balance-details">
+                            <span class="income">↑ Receitas: R$ <span id="totalIncome">0,00</span></span>
+                            <span class="expense">↓ Despesas: R$ <span id="totalExpense">0,00</span></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Transação Rápida -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3>⚡ Adicionar Transação</h3>
+                    </div>
+                    <div class="card-body">
+                        <form id="transactionForm">
+                            <div class="form-group">
+                                <input type="number" id="amount" placeholder="Valor (R$)" required step="0.01">
+                            </div>
+                            <div class="form-group">
+                                <input type="text" id="description" placeholder="Descrição" required>
+                            </div>
+                            <div class="form-group">
+                                <select id="type" required>
+                                    <option value="">Selecione o tipo</option>
+                                    <option value="income">💰 Receita</option>
+                                    <option value="expense">💸 Despesa</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Adicionar</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Comparação Diária -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3>📊 Comparação Diária</h3>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="dailyChart"></canvas>
+                        <div class="comparison-text" id="dailyComparison"></div>
+                    </div>
+                </div>
+
+                <!-- Comparação Mensal -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3>📈 Comparação Mensal</h3>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="monthlyChart"></canvas>
+                        <div class="comparison-text" id="monthlyComparison"></div>
+                    </div>
+                </div>
+
+                <!-- Simulador de Juros -->
+                <div class="card card-full">
+                    <div class="card-header">
+                        <h3>🧮 Simulador de Juros</h3>
+                    </div>
+                    <div class="card-body">
+                        <form id="interestForm" class="interest-form">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Valor Total</label>
+                                    <input type="number" id="loanAmount" placeholder="Ex: 1000" required step="0.01">
+                                </div>
+                                <div class="form-group">
+                                    <label>Parcelas</label>
+                                    <input type="number" id="installments" placeholder="Ex: 12" required min="1">
+                                </div>
+                                <div class="form-group">
+                                    <label>Taxa de Juros (%)</label>
+                                    <input type="number" id="interestRate" placeholder="Ex: 2.5" required step="0.01">
+                                </div>
+                                <button type="submit" class="btn btn-secondary">Calcular</button>
+                            </div>
+                        </form>
+                        <div id="interestResults" class="interest-results hidden">
+                            <div class="result-grid">
+                                <div class="result-item">
+                                    <span class="result-label">Valor à Vista:</span>
+                                    <span class="result-value" id="cashValue">R$ 0,00</span>
+                                </div>
+                                <div class="result-item">
+                                    <span class="result-label">Valor Total Parcelado:</span>
+                                    <span class="result-value" id="totalWithInterest">R$ 0,00</span>
+                                </div>
+                                <div class="result-item">
+                                    <span class="result-label">Total de Juros:</span>
+                                    <span class="result-value highlight" id="totalInterest">R$ 0,00</span>
+                                </div>
+                                <div class="result-item">
+                                    <span class="result-label">Valor da Parcela:</span>
+                                    <span class="result-value" id="installmentValue">R$ 0,00</span>
+                                </div>
+                            </div>
+                            <canvas id="interestChart"></canvas>
+                            <div class="educational-note">
+                                💡 <strong>Educação Financeira:</strong> Juros pequenos se acumulam em grandes valores no longo prazo. 
+                                Sempre que possível, prefira pagamentos à vista ou menor número de parcelas.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Histórico de Transações -->
+                <div class="card card-full">
+                    <div class="card-header">
+                        <h3>📜 Histórico de Transações</h3>
+                        <button class="btn btn-sm" id="btnExport">📊 Exportar Dados</button>
+                    </div>
+                    <div class="card-body">
+                        <div class="transaction-list" id="transactionList">
+                            <div class="empty-state">Nenhuma transação registrada ainda.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Conquistas -->
+                <div class="card card-full">
+                    <div class="card-header">
+                        <h3>🏆 Conquistas</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="achievements-grid" id="achievementsGrid"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal de Reflexão -->
+    <div class="modal" id="reflectionModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>💭 Momento de Reflexão</h2>
+            </div>
+            <div class="modal-body">
+                <p class="reflection-question">Você realmente precisa desse gasto agora?</p>
+                <p class="reflection-subtext">Essa compra te aproxima ou te afasta das suas metas financeiras?</p>
+                <div class="reflection-amount" id="reflectionAmount"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="btnDefer">⏰ Adiar (+10 pontos)</button>
+                <button class="btn btn-primary" id="btnConfirm">✓ Confirmar Gasto</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast"></div>
+
+    <script src="scripts/auth.js"></script>
+    <script src="scripts/charts.js"></script>
+    <script src="scripts/main.js"></script>
+</body>
+</html>
