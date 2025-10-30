@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cash View - Investimentos</title>
+    <link rel="stylesheet" href="styles/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <span class="logo">💰</span>
+                <span class="brand-name">Cash View</span>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="index.html" class="nav-link">Início</a></li>
+                <li><a href="investimentos.html" class="nav-link active">Investimentos</a></li>
+                <li><a href="about.html" class="nav-link">Sobre Nós</a></li>
+                <li><span class="user-name" id="userName"></span></li>
+                <li><button class="btn-logout" id="btnLogout">Sair</button></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="dashboard">
+        <div class="container">
+            <!-- Header -->
+            <header class="dashboard-header">
+                <h1>💹 Investimentos Inteligentes</h1>
+                <p class="subtitle">Aprenda a fazer seu dinheiro trabalhar para você</p>
+            </header>
+
+            <!-- Introdução -->
+            <div class="card card-full">
+                <div class="card-header">
+                    <h3>🎓 O que são Investimentos?</h3>
+                </div>
+                <div class="card-body">
+                    <p style="color: var(--text-secondary); line-height: 1.8; margin-bottom: 1.5rem;">
+                        Investir é fazer seu dinheiro crescer ao longo do tempo. Em vez de deixar parado na conta, 
+                        você empresta ou aplica esse dinheiro em ativos que geram retorno. Existem dois grandes grupos:
+                    </p>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-bottom: 1.5rem;">
+                        <div style="background: var(--bg-light); padding: 1.5rem; border-radius: var(--border-radius-sm); border-left: 4px solid var(--success-color);">
+                            <h4 style="color: var(--success-color); margin-bottom: 0.5rem;">🔒 Renda Fixa</h4>
+                            <p style="color: var(--text-secondary); font-size: 0.95rem;">
+                                Você sabe quanto vai receber no final. Exemplos: Tesouro Direto, CDB, LCI/LCA. 
+                                <strong>Menor risco, retorno previsível.</strong>
+                            </p>
+                        </div>
+                        <div style="background: var(--bg-light); padding: 1.5rem; border-radius: var(--border-radius-sm); border-left: 4px solid var(--secondary-color);">
+                            <h4 style="color: var(--secondary-color); margin-bottom: 0.5rem;">📈 Renda Variável</h4>
+                            <p style="color: var(--text-secondary); font-size: 0.95rem;">
+                                O retorno oscila conforme o mercado. Exemplos: Ações, Fundos Imobiliários, Criptomoedas. 
+                                <strong>Maior risco, maior potencial de ganho.</strong>
+                            </p>
+                        </div>
+                    </div>
+                    <canvas id="riskReturnChart" style="max-height: 300px;"></canvas>
+                    <div class="educational-note" style="margin-top: 1rem;">
+                        💡 <strong>Regra de Ouro:</strong> Quanto maior o risco, maior o potencial de retorno. 
+                        Diversificar é essencial para equilibrar segurança e crescimento.
+                    </div>
+                </div>
+            </div>
+
+            <!-- CDI -->
+            <div class="card card-full">
+                <div class="card-header">
+                    <h3>📊 CDI - Certificado de Depósito Interbancário</h3>
+                </div>
+                <div class="card-body">
+                    <p style="color: var(--text-secondary); line-height: 1.8; margin-bottom: 1rem;">
+                        O <strong>CDI</strong> é a taxa de juros que os bancos cobram entre si para empréstimos de curtíssimo prazo. 
+                        É o principal índice de referência para investimentos de renda fixa no Brasil.
+                    </p>
+                    <div style="background: rgba(16, 185, 129, 0.1); padding: 1.5rem; border-radius: var(--border-radius-sm); border-left: 4px solid var(--success-color);">
+                        <p style="color: var(--text-primary); font-size: 1.1rem; margin-bottom: 0.5rem;">
+                            📈 Taxa CDI atual (2025): <strong style="color: var(--success-color);">~10,65% ao ano</strong>
+                        </p>
+                        <p style="color: var(--text-secondary); font-size: 0.9rem;">
+                            Muitos investimentos (CDB, LCI, LCA) oferecem um percentual do CDI (ex: 100%, 110%, 120%).
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Simulador de Renda Fixa -->
+            <div class="card card-full">
+                <div class="card-header">
+                    <h3>🧮 Simulador de Renda Fixa</h3>
+                </div>
+                <div class="card-body">
+                    <form id="fixedIncomeForm" class="interest-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Valor Inicial (R$)</label>
+                                <input type="number" id="fixedAmount" placeholder="1000" required step="0.01" min="0">
+                            </div>
+                            <div class="form-group">
+                                <label>Período (meses)</label>
+                                <input type="number" id="fixedPeriod" placeholder="12" required min="1" max="360">
+                            </div>
+                            <div class="form-group">
+                                <label>Tipo de Investimento</label>
+                                <select id="fixedType" required>
+                                    <option value="">Escolha...</option>
+                                    <option value="poupanca">💰 Poupança (0,5% a.m.)</option>
+                                    <option value="tesouro">🏦 Tesouro Selic (100% CDI)</option>
+                                    <option value="cdb100">📊 CDB 100% CDI</option>
+                                    <option value="cdb110">📊 CDB 110% CDI</option>
+                                    <option value="cdb120">📊 CDB 120% CDI</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Calcular</button>
+                        </div>
+                    </form>
+                    <div id="fixedIncomeResults" class="interest-results hidden">
+                        <div class="result-grid">
+                            <div class="result-item">
+                                <span class="result-label">Valor Investido:</span>
+                                <span class="result-value" id="fixedInvested">R$ 0,00</span>
+                            </div>
+                            <div class="result-item">
+                                <span class="result-label">Rendimento Bruto:</span>
+                                <span class="result-value" style="color: var(--success-color);" id="fixedGross">R$ 0,00</span>
+                            </div>
+                            <div class="result-item">
+                                <span class="result-label">Imposto de Renda:</span>
+                                <span class="result-value" style="color: var(--danger-color);" id="fixedTax">R$ 0,00</span>
+                            </div>
+                            <div class="result-item">
+                                <span class="result-label">Valor Final Líquido:</span>
+                                <span class="result-value" style="color: var(--primary-color); font-size: 1.8rem;" id="fixedFinal">R$ 0,00</span>
+                            </div>
+                        </div>
+                        <canvas id="fixedIncomeChart" style="margin-top: 2rem;"></canvas>
+                        <div class="educational-note" style="margin-top: 1rem;">
+                            📋 <strong>Imposto de Renda (Tabela Regressiva):</strong><br>
+                            • Até 180 dias: 22,5% | • 181-360 dias: 20% | • 361-720 dias: 17,5% | • Acima de 720 dias: 15%
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tesouro Direto -->
+            <div class="card card-full">
+                <div class="card-header">
+                    <h3>🏦 Tesouro Direto</h3>
+                </div>
+                <div class="card-body">
+                    <p style="color: var(--text-secondary); line-height: 1.8; margin-bottom: 1.5rem;">
+                        O Tesouro Direto permite que você empreste dinheiro ao governo brasileiro em troca de juros. 
+                        É um dos investimentos mais seguros do país.
+                    </p>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;">
+                        <div style="background: var(--bg-light); padding: 1rem; border-radius: var(--border-radius-sm);">
+                            <h4 style="color: var(--primary-color); margin-bottom: 0.5rem;">Tesouro Selic</h4>
+                            <p style="color: var(--text-secondary); font-size: 0.9rem;">
+                                Segue a taxa Selic. Ideal para reserva de emergência. Liquidez diária.
+                            </p>
+                        </div>
+                        <div style="background: var(--bg-light); padding: 1rem; border-radius: var(--border-radius-sm);">
+                            <h4 style="color: var(--primary-color); margin-bottom: 0.5rem;">Tesouro IPCA+</h4>
+                            <p style="color: var(--text-secondary); font-size: 0.9rem;">
+                                Rende IPCA + taxa fixa. Protege da inflação. Ideal para longo prazo.
+                            </p>
+                        </div>
+                        <div style="background: var(--bg-light); padding: 1rem; border-radius: var(--border-radius-sm);">
+                            <h4 style="color: var(--primary-color); margin-bottom: 0.5rem;">Tesouro Prefixado</h4>
+                            <p style="color: var(--text-secondary); font-size: 0.9rem;">
+                                Taxa fixa definida na compra. Sabe exatamente quanto vai receber.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Comparativo Visual -->
+            <div class="card card-full">
+                <div class="card-header">
+                    <h3>⚖️ Comparativo: Poupança vs Investimentos</h3>
+                </div>
+                <div class="card-body">
+                    <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">
+                        Veja como R$ 10.000 crescem em 12 meses em diferentes investimentos:
+                    </p>
+                    <canvas id="comparisonChart"></canvas>
+                    <div class="educational-note" style="margin-top: 1rem;">
+                        ⚠️ <strong>Atenção:</strong> A poupança rende apenas ~6% ao ano, perdendo para a inflação e outros investimentos de baixo risco.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Renda Variável -->
+            <div class="card card-full">
+                <div class="card-header">
+                    <h3>📈 Renda Variável: Ações e Fundos</h3>
+                </div>
+                <div class="card-body">
+                    <p style="color: var(--text-secondary); line-height: 1.8; margin-bottom: 1.5rem;">
+                        Na <strong>renda variável</strong>, você se torna sócio de empresas (ações) ou imóveis (FIIs). 
+                        O retorno não é garantido e oscila conforme o mercado, mas o potencial de ganho é maior no longo prazo.
+                    </p>
+                    <div style="background: rgba(245, 158, 11, 0.1); padding: 1.5rem; border-radius: var(--border-radius-sm); border-left: 4px solid var(--secondary-color);">
+                        <h4 style="color: var(--secondary-color); margin-bottom: 0.5rem;">⚠️ Importante Saber:</h4>
+                        <ul style="color: var(--text-secondary); margin-left: 1.5rem; line-height: 1.8;">
+                            <li>Volatilidade: preços sobem e descem diariamente</li>
+                            <li>Horizonte: ideal para investimentos de 5+ anos</li>
+                            <li>Diversificação: nunca coloque tudo em uma ação</li>
+                            <li>Estudo: aprenda sobre as empresas antes de investir</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Simulador Renda Variável -->
+            <div class="card card-full">
+                <div class="card-header">
+                    <h3>🎲 Simulador de Renda Variável</h3>
+                </div>
+                <div class="card-body">
+                    <form id="variableIncomeForm" class="interest-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Valor Inicial (R$)</label>
+                                <input type="number" id="varAmount" placeholder="5000" required step="0.01" min="0">
+                            </div>
+                            <div class="form-group">
+                                <label>Retorno Anual Médio (%)</label>
+                                <input type="number" id="varReturn" placeholder="12" required step="0.1" min="-50" max="100">
+                            </div>
+                            <div class="form-group">
+                                <label>Período (anos)</label>
+                                <input type="number" id="varPeriod" placeholder="5" required min="1" max="30">
+                            </div>
+                            <div class="form-group">
+                                <label>Volatilidade (±%)</label>
+                                <input type="number" id="varVolatility" placeholder="15" required min="0" max="100">
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-secondary" style="width: 100%; margin-top: 1rem;">Simular Cenários</button>
+                    </form>
+                    <div id="variableIncomeResults" class="interest-results hidden">
+                        <div class="result-grid">
+                            <div class="result-item">
+                                <span class="result-label">Cenário Pessimista:</span>
+                                <span class="result-value" style="color: var(--danger-color);" id="varPessimistic">R$ 0,00</span>
+                            </div>
+                            <div class="result-item">
+                                <span class="result-label">Cenário Realista:</span>
+                                <span class="result-value" style="color: var(--secondary-color);" id="varRealistic">R$ 0,00</span>
+                            </div>
+                            <div class="result-item">
+                                <span class="result-label">Cenário Otimista:</span>
+                                <span class="result-value" style="color: var(--success-color);" id="varOptimistic">R$ 0,00</span>
+                            </div>
+                            <div class="result-item">
+                                <span class="result-label">Retorno Médio:</span>
+                                <span class="result-value" style="color: var(--primary-color); font-size: 1.8rem;" id="varAverage">R$ 0,00</span>
+                            </div>
+                        </div>
+                        <canvas id="variableIncomeChart" style="margin-top: 2rem;"></canvas>
+                        <div class="educational-note" style="margin-top: 1rem;">
+                            📊 <strong>Simulação com Volatilidade:</strong> O gráfico mostra oscilações mensais realistas. 
+                            Em renda variável, é normal ter meses negativos — o importante é o resultado no longo prazo.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Criptomoedas -->
+            <div class="card card-full">
+                <div class="card-header">
+                    <h3>₿ Criptomoedas</h3>
+                </div>
+                <div class="card-body">
+                    <p style="color: var(--text-secondary); line-height: 1.8; margin-bottom: 1.5rem;">
+                        Criptomoedas são moedas digitais descentralizadas, sem controle de governos ou bancos. 
+                        Bitcoin e Ethereum são as mais conhecidas.
+                    </p>
+                    <div style="background: rgba(239, 68, 68, 0.1); padding: 1.5rem; border-radius: var(--border-radius-sm); border-left: 4px solid var(--danger-color); margin-bottom: 1.5rem;">
+                        <h4 style="color: var(--danger-color); margin-bottom: 0.5rem;">⚠️ Alto Risco!</h4>
+                        <ul style="color: var(--text-secondary); margin-left: 1.5rem; line-height: 1.8;">
+                            <li><strong>Extrema volatilidade:</strong> pode oscilar 20% em um dia</li>
+                            <li><strong>Sem garantias:</strong> não há proteção do governo</li>
+                            <li><strong>Risco de perda total:</strong> exchanges podem quebrar</li>
+                            <li><strong>Recomendação:</strong> nunca invista mais de 5% do patrimônio</li>
+                        </ul>
+                    </div>
+                    <canvas id="cryptoVolatilityChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Avisos Finais -->
+            <div class="card card-full" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(59, 130, 246, 0.1)); border: 2px solid var(--primary-color);">
+                <div class="card-body" style="text-align: center;">
+                    <h3 style="color: var(--primary-color); margin-bottom: 1rem;">💡 Lembre-se Sempre:</h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; text-align: left;">
+                        <div>
+                            <strong style="color: var(--text-primary);">📚 Educação em Primeiro Lugar</strong>
+                            <p style="color: var(--text-secondary); margin-top: 0.5rem;">Estude antes de investir. Conheça os riscos e características de cada produto.</p>
+                        </div>
+                        <div>
+                            <strong style="color: var(--text-primary);">🎯 Diversifique</strong>
+                            <p style="color: var(--text-secondary); margin-top: 0.5rem;">Não coloque todos os ovos na mesma cesta. Espalhe seus investimentos.</p>
+                        </div>
+                        <div>
+                            <strong style="color: var(--text-primary);">⏰ Pense no Longo Prazo</strong>
+                            <p style="color: var(--text-secondary); margin-top: 0.5rem;">Investimentos rendem mais com o tempo. Paciência é fundamental.</p>
+                        </div>
+                        <div>
+                            <strong style="color: var(--text-primary);">⚠️ Rentabilidade Passada ≠ Futuro</strong>
+                            <p style="color: var(--text-secondary); margin-top: 0.5rem;">Resultados anteriores não garantem lucros futuros. Avalie sempre os riscos.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Botões de Ação -->
+            <div style="display: flex; gap: 1rem; justify-content: center; margin-top: 2rem; flex-wrap: wrap;">
+                <a href="index.html" class="btn btn-primary">← Voltar ao Dashboard</a>
+                <button class="btn btn-secondary" id="btnExportSimulations">📊 Exportar Simulações</button>
+            </div>
+        </div>
+    </main>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast"></div>
+
+    <script src="scripts/auth.js"></script>
+    <script src="scripts/investments.js"></script>
+</body>
+</html>
