@@ -4,19 +4,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cash View - Sobre Nós</title>
-    <link rel="stylesheet" href="styles/style.css">
+    <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <!-- Navbar -->
-   <ul class="nav-menu">
-    <li><a href="index.html" class="nav-link active">Início</a></li>
-    <li><a href="investimentos.html" class="nav-link">Investimentos</a></li>
-    <li><a href="about.html" class="nav-link">Sobre Nós</a></li>
-    <li><span class="user-name" id="userName"></span></li>
-    <li><button class="btn-logout" id="btnLogout">Sair</button></li>
-</ul>
-    <!-- Main Content -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <span class="logo">💰</span>
+                <span class="brand-name">Cash View</span>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="index.html" class="nav-link">Início</a></li>
+                <li><a href="investimentos.html" class="nav-link">Investimentos</a></li>
+                <li><a href="about.html" class="nav-link active">Sobre Nós</a></li>
+                <li><span class="user-name" id="userName"></span></li>
+                <li><button class="btn-logout" id="btnLogout">Sair</button></li>
+            </ul>
+        </div>
+    </nav>
+
     <main class="dashboard">
         <div class="container">
             <header class="dashboard-header">
@@ -24,132 +31,70 @@
                 <p class="subtitle">Da confiança à transformação</p>
             </header>
 
-            <!-- Origem do Projeto -->
-            <div class="about-section">
-                <h2>🎯 A Origem</h2>
-                <p>
-                    O <strong>Cash View</strong> nasceu como evolução do projeto acadêmico 
-                    <em>"Paper Money: From Trust to Transformation"</em>, desenvolvido por estudantes 
-                    do Colégio Porto Seguro na disciplina de Escola de Negócios.
-                </p>
-                <p>
-                    O projeto original investigou a evolução histórica do dinheiro — desde o escambo 
-                    até as criptomoedas — com foco especial na <strong>desmaterialização do dinheiro</strong> 
-                    e seus impactos na consciência financeira das pessoas.
-                </p>
-                <p>
-                    Inspirados pela pesquisa, decidimos criar uma solução prática: um aplicativo web 
-                    que transformasse conceitos teóricos em ferramentas reais de educação financeira.
-                </p>
-            </div>
-
-            <!-- Missão -->
-            <div class="about-section">
-                <h2>🎓 Nossa Missão</h2>
-                <p>
-                    Promover <strong>educação financeira prática e acessível</strong> através da tecnologia, 
-                    tornando o "dinheiro invisível" do mundo digital algo visual, compreensível e consciente.
-                </p>
-                <p>
-                    Queremos que cada usuário sinta o impacto real de suas decisões financeiras — 
-                    não apenas vendo números, mas compreendendo o que eles significam para seu futuro.
-                </p>
-            </div>
-
-            <!-- Visão -->
-            <div class="about-section">
-                <h2>🔮 Nossa Visão</h2>
-                <p>
-                    Transformar a relação das pessoas com o dinheiro digital, capacitando-as a:
-                </p>
-                <ul style="color: var(--text-secondary); margin-left: 2rem; line-height: 2;">
-                    <li>✓ Compreender juros e suas consequências de longo prazo</li>
-                    <li>✓ Tomar decisões financeiras reflexivas, não impulsivas</li>
-                    <li>✓ Visualizar gastos de forma clara e comparativa</li>
-                    <li>✓ Desenvolver hábitos financeiros saudáveis através da gamificação</li>
-                    <li>✓ Proteger-se de golpes e armadilhas do mundo digital</li>
-                </ul>
-            </div>
-
-            <!-- Equipe -->
-            <div class="about-section">
-                <h2>👥 Nossa Equipe</h2>
-                <p style="text-align: center; color: var(--text-secondary); margin-bottom: 2rem;">
-                    Estudantes do Ensino Médio | Colégio Porto Seguro
-                </p>
-                
-                <!-- Nomes da Equipe -->
-                <div class="team-names">
-                    <div class="team-member">Daniel Gomes</div>
-                    <div class="team-member">Marcos Pires</div>
-                    <div class="team-member">Thiago Nascimento</div>
-                    <div class="team-member">Edson Oliveira</div>
+            <div class="card card-full">
+                <div class="card-header">
+                    <h3>🎯 A Origem</h3>
+                </div>
+                <div class="card-body">
+                    <p style="color: var(--text-secondary); line-height: 1.8;">
+                        O <strong>Cash View</strong> nasceu como evolução do projeto acadêmico 
+                        "Paper Money: From Trust to Transformation", desenvolvido por estudantes 
+                        do Colégio Porto Seguro. Inspirados pela pesquisa sobre a desmaterialização 
+                        do dinheiro, criamos uma ferramenta prática de educação financeira.
+                    </p>
                 </div>
             </div>
 
-            <!-- Inspiração -->
-            <div class="about-section">
-                <h2>💡 Inspiração</h2>
-                <p>
-                    Este projeto foi inspirado e fundamentado na pesquisa 
-                    <strong>"Paper Money: From Trust to Transformation"</strong>, 
-                    que explorou:
-                </p>
-                <ul style="color: var(--text-secondary); margin-left: 2rem; line-height: 2;">
-                    <li>📜 A evolução histórica do papel-moeda e seu papel na construção da confiança nos sistemas financeiros</li>
-                    <li>💳 A transição do dinheiro físico para o digital e seus impactos sociais</li>
-                    <li>⚠️ Os desafios da era digital: golpes, exclusão financeira e perda de consciência sobre gastos</li>
-                    <li>🌐 A importância da inclusão digital e alfabetização financeira</li>
-                </ul>
-            </div>
-
-            <!-- Tecnologias -->
-            <div class="about-section">
-                <h2>⚙️ Tecnologias Utilizadas</h2>
-                <div class="team-names">
-                    <div class="team-member">HTML5 / CSS3</div>
-                    <div class="team-member">JavaScript ES6+</div>
-                    <div class="team-member">Chart.js</div>
-                    <div class="team-member">LocalStorage API</div>
+            <div class="card card-full">
+                <div class="card-header">
+                    <h3>🎓 Nossa Missão</h3>
+                </div>
+                <div class="card-body">
+                    <p style="color: var(--text-secondary); line-height: 1.8;">
+                        Promover <strong>educação financeira prática e acessível</strong> através da tecnologia, 
+                        tornando o "dinheiro invisível" do mundo digital algo visual, compreensível e consciente.
+                    </p>
                 </div>
             </div>
 
-            <!-- Créditos -->
-            <div class="about-section">
-                <h2>🏫 Créditos</h2>
-                <p>
-                    <strong>Instituição:</strong> Colégio Porto Seguro<br>
-                    <strong>Disciplina:</strong> Escola de Negócios - Ensino Médio<br>
-                    <strong>Projeto Original:</strong> Paper Money: From Trust to Transformation<br>
-                    <strong>Evolução:</strong> Cash View - Aplicativo Web de Controle Financeiro<br>
-                    <strong>Ano:</strong> 2025
-                </p>
+            <div class="card card-full">
+                <div class="card-header">
+                    <h3>👥 Nossa Equipe</h3>
+                </div>
+                <div class="card-body">
+                    <p style="text-align: center; color: var(--text-secondary); margin-bottom: 2rem;">
+                        Estudantes do Ensino Médio | Colégio Porto Seguro
+                    </p>
+                    
+                    <img src="team-photo.jpg" alt="Equipe Cash View" style="width: 100%; max-width: 800px; border-radius: var(--border-radius); margin: 0 auto 2rem; display: block; box-shadow: 0 10px 15px rgba(0,0,0,0.2);">
+                    
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                        <div style="background: var(--bg-light); padding: 1rem; border-radius: var(--border-radius-sm); text-align: center; font-weight: 600;">Daniel Gomes</div>
+                        <div style="background: var(--bg-light); padding: 1rem; border-radius: var(--border-radius-sm); text-align: center; font-weight: 600;">Marcos Pires</div>
+                        <div style="background: var(--bg-light); padding: 1rem; border-radius: var(--border-radius-sm); text-align: center; font-weight: 600;">Thiago Nascimento</div>
+                        <div style="background: var(--bg-light); padding: 1rem; border-radius: var(--border-radius-sm); text-align: center; font-weight: 600;">Edson Oliveira</div>
+                    </div>
+                </div>
             </div>
 
-            <!-- Botão Voltar -->
             <div style="text-align: center; margin-top: 3rem;">
-                <a href="index.html" class="btn btn-primary">
-                    ← Voltar ao Dashboard
-                </a>
+                <a href="index.html" class="btn btn-primary">← Voltar ao Dashboard</a>
             </div>
         </div>
     </main>
 
+    <script src="auth.js"></script>
     <script>
-        // Verificar autenticação
         const currentUser = JSON.parse(sessionStorage.getItem('currentUser'));
         if (!currentUser) {
             window.location.href = 'login.html';
         } else {
             document.getElementById('userName').textContent = currentUser.name;
+            document.getElementById('btnLogout').addEventListener('click', () => {
+                sessionStorage.removeItem('currentUser');
+                window.location.href = 'login.html';
+            });
         }
-        
-        // Logout
-        document.getElementById('btnLogout').addEventListener('click', () => {
-            sessionStorage.removeItem('currentUser');
-            window.location.href = 'login.html';
-        });
     </script>
 </body>
-
 </html>
