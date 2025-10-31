@@ -1,26 +1,14 @@
 // ========================================
-// CASH VIEW - AUTHENTICATION
+// CASH VIEW - AUTH.JS
 // ========================================
 
-// Verificar se já está logado
-function checkExistingSession() {
-    const currentUser = JSON.parse(sessionStorage.getItem('currentUser'));
-    if (currentUser && window.location.pathname.includes('login.html')) {
-        window.location.href = 'index.html';
-    }
-}
-
-// Registrar novo usuário
 function registerUser(name, email, password) {
-    // Verificar se o usuário já existe
-    const existingUser = localStorage.getItem(`user_${email}`);
-    if (existingUser) {
-        return { success: false, message: 'Este e-mail já está cadastrado!' };
+    if (localStorage.getItem(`user_${email}`)) {
+        return { success: false, message: 'E-mail já cadastrado!' };
     }
     
-    // Validações
     if (!name || name.length < 3) {
-        return { success: false, message: 'Nome deve ter pelo menos 3 caracteres!' };
+        return { success: false, message: 'Nome deve ter 3+ caracteres!' };
     }
     
     if (!email || !email.includes('@')) {
@@ -28,26 +16,21 @@ function registerUser(name, email, password) {
     }
     
     if (!password || password.length < 6) {
-        return { success: false, message: 'Senha deve ter pelo menos 6 caracteres!' };
+        return { success: false, message: 'Senha deve ter 6+ caracteres!' };
     }
     
-    // Criar usuário
     const user = {
         name,
         email,
-        password: btoa(password), // Encoding simples (não é seguro em produção real)
+        password: btoa(password),
         createdAt: Date.now()
     };
     
-    // Salvar no localStorage
     localStorage.setItem(`user_${email}`, JSON.stringify(user));
-    
-    return { success: true, message: 'Cadastro realizado com sucesso!' };
+    return { success: true, message: 'Cadastro realizado!' };
 }
 
-// Fazer login
 function loginUser(email, password) {
-    // Buscar usuário
     const userStr = localStorage.getItem(`user_${email}`);
     
     if (!userStr) {
@@ -56,80 +39,19 @@ function loginUser(email, password) {
     
     const user = JSON.parse(userStr);
     
-    // Verificar senha
     if (btoa(password) !== user.password) {
         return { success: false, message: 'Senha incorreta!' };
     }
     
-    // Criar sessão
     const sessionUser = {
         name: user.name,
         email: user.email
     };
     
     sessionStorage.setItem('currentUser', JSON.stringify(sessionUser));
-    
-    return { success: true, message: 'Login realizado com sucesso!' };
+    return { success: true, message: 'Login realizado!' };
 }
 
-// Setup de página de login
-if (window.location.pathname.includes('login.html')) {
-    checkExistingSession();
-    
-    document.addEventListener('DOMContentLoaded', () => {
-        const form = document.getElementById('loginForm');
-        
-        form.addEventListener('submit', (e) => {
-            e.preventDefault();
-            
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            
-            const result = loginUser(email, password);
-            
-            if (result.success) {
-                window.location.href = 'index.html';
-            } else {
-                showAuthError(result.message);
-            }
-        });
-    });
-}
-
-// Setup de página de registro
-if (window.location.pathname.includes('register.html')) {
-    checkExistingSession();
-    
-    document.addEventListener('DOMContentLoaded', () => {
-        const form = document.getElementById('registerForm');
-        
-        form.addEventListener('submit', (e) => {
-            e.preventDefault();
-            
-            const name = document.getElementById('name').value;
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            const confirmPassword = document.getElementById('confirmPassword').value;
-            
-            if (password !== confirmPassword) {
-                showAuthError('As senhas não coincidem!');
-                return;
-            }
-            
-            const result = registerUser(name, email, password);
-            
-            if (result.success) {
-                // Fazer login automático
-                loginUser(email, password);
-                window.location.href = 'index.html';
-            } else {
-                showAuthError(result.message);
-            }
-        });
-    });
-}
-
-// Mostrar erro de autenticação
 function showAuthError(message) {
     let errorDiv = document.getElementById('authError');
     
@@ -155,4 +77,56 @@ function showAuthError(message) {
     setTimeout(() => {
         errorDiv.style.display = 'none';
     }, 5000);
+}
+
+// Setup de login
+if (window.location.pathname.includes('login.html')) {
+    document.addEventListener('DOMContentLoaded', () => {
+        const form = document.getElementById('loginForm');
+        
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            const result = loginUser(email, password);
+            
+            if (result.success) {
+                window.location.href = 'index.html';
+            } else {
+                showAuthError(result.message);
+            }
+        });
+    });
+}
+
+// Setup de registro
+if (window.location.pathname.includes('register.html')) {
+    document.addEventListener('DOMContentLoaded', () => {
+        const form = document.getElementById('registerForm');
+        
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            
+            if (password !== confirmPassword) {
+                showAuthError('As senhas não coincidem!');
+                return;
+            }
+            
+            const result = registerUser(name, email, password);
+            
+            if (result.success) {
+                loginUser(email, password);
+                window.location.href = 'index.html';
+            } else {
+                showAuthError(result.message);
+            }
+        });
+    });
 }
