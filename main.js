@@ -1,135 +1,80 @@
 // ========================================
-// CASH VIEW - MAIN JAVASCRIPT
+// CASH VIEW - MAIN.JS
 // ========================================
 
-// Verificar autenticação
-function checkAuth() {
-    const currentUser = JSON.parse(sessionStorage.getItem('currentUser'));
-    if (!currentUser) {
-        window.location.href = 'login.html';
-        return null;
-    }
-    return currentUser;
-}
+// Config de milhas
+const MILES_RATE = 0.05; // 1 milha = R$ 0.05
+const FUND_ANNUAL_RATE = 0.10; // 10% a.a.
+const MIN_INVESTMENT = 10; // R$ 10
 
 // Estado da aplicação
 let appState = {
     currentUser: null,
     transactions: [],
     achievements: [],
-    points: 0
+    points: 0,
+    miles: 0,
+    fundBalance: 0,
+    fundHistory: [],
+    totalMilesConverted: 0,
+    monthlyReturn: 0,
+    lastFundUpdate: Date.now()
 };
 
-// Conquistas disponíveis
+// Conquistas
 const ACHIEVEMENTS = [
-    {
-        id: 'first_transaction',
-        title: 'Primeiros Passos',
-        description: 'Registre sua primeira transação',
-        icon: '🎯',
-        difficulty: 'easy',
-        check: (state) => state.transactions.length >= 1
-    },
-    {
-        id: 'first_save',
-        title: 'Primeira Economia',
-        description: 'Registre sua primeira receita',
-        icon: '💰',
-        difficulty: 'easy',
-        check: (state) => state.transactions.some(t => t.type === 'income')
-    },
-    {
-        id: 'five_transactions',
-        title: 'Começando Bem',
-        description: 'Registre 5 transações',
-        icon: '📊',
-        difficulty: 'easy',
-        check: (state) => state.transactions.length >= 5
-    },
-    {
-        id: 'positive_balance',
-        title: 'No Azul',
-        description: 'Mantenha saldo positivo',
-        icon: '✅',
-        difficulty: 'medium',
-        check: (state) => calculateBalance(state.transactions) > 0
-    },
-    {
-        id: 'ten_transactions',
-        title: 'Dedicado',
-        description: 'Registre 10 transações',
-        icon: '🏅',
-        difficulty: 'medium',
-        check: (state) => state.transactions.length >= 10
-    },
-    {
-        id: 'reflection_master',
-        title: 'Mestre da Reflexão',
-        description: 'Adie 3 gastos grandes',
-        icon: '🧠',
-        difficulty: 'medium',
-        check: (state) => (state.deferrals || 0) >= 3
-    },
-    {
-        id: 'twenty_transactions',
-        title: 'Persistente',
-        description: 'Registre 20 transações',
-        icon: '💪',
-        difficulty: 'hard',
-        check: (state) => state.transactions.length >= 20
-    },
-    {
-        id: 'big_saver',
-        title: 'Grande Poupador',
-        description: 'Acumule R$ 1.000 em receitas',
-        icon: '💎',
-        difficulty: 'hard',
-        check: (state) => {
-            const totalIncome = state.transactions
-                .filter(t => t.type === 'income')
-                .reduce((sum, t) => sum + t.amount, 0);
-            return totalIncome >= 1000;
-        }
-    },
-    {
-        id: 'balanced',
-        title: 'Equilibrado',
-        description: 'Mantenha saldo acima de R$ 500',
-        icon: '⚖️',
-        difficulty: 'hard',
-        check: (state) => calculateBalance(state.transactions) >= 500
-    }
+    { id: 'first_transaction', title: 'Primeiros Passos', description: 'Primeira transação', icon: '🎯', check: s => s.transactions.length >= 1 },
+    { id: 'first_save', title: 'Primeira Economia', description: 'Primeira receita', icon: '💰', check: s => s.transactions.some(t => t.type === 'income') },
+    { id: 'five_transactions', title: 'Começando Bem', description: '5 transações', icon: '📊', check: s => s.transactions.length >= 5 },
+    { id: 'positive_balance', title: 'No Azul', description: 'Saldo positivo', icon: '✅', check: s => calculateBalance(s.transactions) > 0 },
+    { id: 'investor_100', title: 'Investidor Iniciante', description: 'R$ 100 investidos', icon: '💎', check: s => s.fundBalance >= 100 },
+    { id: 'investor_500', title: 'Investidor Dedicado', description: 'R$ 500 investidos', icon: '👑', check: s => s.fundBalance >= 500 },
+    { id: 'miles_master', title: 'Mestre das Milhas', description: '1000 milhas convertidas', icon: '✈️', check: s => s.totalMilesConverted >= 1000 }
 ];
 
-// Inicializar aplicação
-document.addEventListener('DOMContentLoaded', () => {
-    appState.currentUser = checkAuth();
-    if (!appState.currentUser) return;
-    
-    loadUserData();
-    setupEventListeners();
-    updateDashboard();
-    renderAchievements();
-});
+// Verificar autenticação
+function checkAuth() {
+    const currentUser = JSON.parse(sessionStorage.getItem('currentUser'));
+    if (!currentUser && !window.location.pathname.includes('login') && !window.location.pathname.includes('register')) {
+        window.location.href = 'login.html';
+        return null;
+    }
+    return currentUser;
+}
 
-// Carregar dados do usuário
+// Carregar dados
 function loadUserData() {
     const userData = JSON.parse(localStorage.getItem(`userData_${appState.currentUser.email}`)) || {};
     appState.transactions = userData.transactions || [];
     appState.achievements = userData.achievements || [];
     appState.points = userData.points || 0;
-    appState.deferrals = userData.deferrals || 0;
+    appState.miles = userData.miles || 0;
+    appState.fundBalance = userData.fundBalance || 0;
+    appState.fundHistory = userData.fundHistory || [];
+    appState.totalMilesConverted = userData.totalMilesConverted || 0;
+    appState.monthlyReturn = userData.monthlyReturn || 0;
+    appState.lastFundUpdate = userData.lastFundUpdate || Date.now();
     
-    document.getElementById('userName').textContent = appState.currentUser.name;
+    if (document.getElementById('userName')) {
+        document.getElementById('userName').textContent = appState.currentUser.name;
+    }
+    
+    updateMilesDisplay();
+    checkMonthlyReturn();
 }
 
-// Salvar dados do usuário
+// Salvar dados
 function saveUserData() {
     const userData = {
         transactions: appState.transactions,
         achievements: appState.achievements,
         points: appState.points,
-        deferrals: appState.deferrals
+        miles: appState.miles,
+        fundBalance: appState.fundBalance,
+        fundHistory: appState.fundHistory,
+        totalMilesConverted: appState.totalMilesConverted,
+        monthlyReturn: appState.monthlyReturn,
+        lastFundUpdate: appState.lastFundUpdate
     };
     localStorage.setItem(`userData_${appState.currentUser.email}`, JSON.stringify(userData));
 }
@@ -145,39 +90,37 @@ function calculateBalance(transactions) {
 function updateDashboard() {
     updateBalance();
     updateTransactionList();
+    updateFundPanel();
+    updateMilesDisplay();
     updateCharts();
     checkAchievements();
 }
 
 // Atualizar saldo
 function updateBalance() {
-    const income = appState.transactions
-        .filter(t => t.type === 'income')
-        .reduce((sum, t) => sum + t.amount, 0);
-    
-    const expense = appState.transactions
-        .filter(t => t.type === 'expense')
-        .reduce((sum, t) => sum + t.amount, 0);
-    
+    const income = appState.transactions.filter(t => t.type === 'income').reduce((sum, t) => sum + t.amount, 0);
+    const expense = appState.transactions.filter(t => t.type === 'expense').reduce((sum, t) => sum + t.amount, 0);
     const balance = income - expense;
     
-    document.getElementById('currentBalance').textContent = formatCurrency(balance);
-    document.getElementById('totalIncome').textContent = formatCurrency(income);
-    document.getElementById('totalExpense').textContent = formatCurrency(expense);
+    if (document.getElementById('currentBalance')) {
+        document.getElementById('currentBalance').textContent = formatCurrency(balance);
+        document.getElementById('totalIncome').textContent = formatCurrency(income);
+        document.getElementById('totalExpense').textContent = formatCurrency(expense);
+    }
 }
 
 // Atualizar lista de transações
 function updateTransactionList() {
     const list = document.getElementById('transactionList');
+    if (!list) return;
     
     if (appState.transactions.length === 0) {
         list.innerHTML = '<div class="empty-state">Nenhuma transação registrada ainda.</div>';
         return;
     }
     
-    const sortedTransactions = [...appState.transactions].sort((a, b) => b.date - a.date);
-    
-    list.innerHTML = sortedTransactions.map(t => `
+    const sorted = [...appState.transactions].sort((a, b) => b.date - a.date);
+    list.innerHTML = sorted.map(t => `
         <div class="transaction-item">
             <div class="transaction-info">
                 <div class="transaction-description">${t.description}</div>
@@ -188,85 +131,6 @@ function updateTransactionList() {
             </div>
         </div>
     `).join('');
-}
-
-// Configurar event listeners
-function setupEventListeners() {
-    // Logout
-    document.getElementById('btnLogout').addEventListener('click', () => {
-        sessionStorage.removeItem('currentUser');
-        window.location.href = 'login.html';
-    });
-    
-    // Form de transação
-    document.getElementById('transactionForm').addEventListener('submit', handleTransactionSubmit);
-    
-    // Form de juros
-    document.getElementById('interestForm').addEventListener('submit', handleInterestCalculation);
-    
-    // Exportar dados
-    document.getElementById('btnExport').addEventListener('click', exportData);
-    
-    // Modal de reflexão
-    document.getElementById('btnDefer').addEventListener('click', handleDeferExpense);
-    document.getElementById('btnConfirm').addEventListener('click', handleConfirmExpense);
-}
-
-// Variável temporária para transação pendente
-let pendingTransaction = null;
-
-// Manipular submissão de transação
-function handleTransactionSubmit(e) {
-    e.preventDefault();
-    
-    const amount = parseFloat(document.getElementById('amount').value);
-    const description = document.getElementById('description').value;
-    const type = document.getElementById('type').value;
-    
-    // Se for despesa acima de R$ 100, mostrar modal de reflexão
-    if (type === 'expense' && amount >= 100) {
-        pendingTransaction = { amount, description, type };
-        showReflectionModal(amount);
-        return;
-    }
-    
-    // Adicionar transação diretamente
-    addTransaction({ amount, description, type });
-    e.target.reset();
-}
-
-// Mostrar modal de reflexão
-function showReflectionModal(amount) {
-    document.getElementById('reflectionAmount').textContent = formatCurrency(amount);
-    document.getElementById('reflectionModal').classList.add('show');
-}
-
-// Esconder modal de reflexão
-function hideReflectionModal() {
-    document.getElementById('reflectionModal').classList.remove('show');
-}
-
-// Adiar gasto
-function handleDeferExpense() {
-    appState.points += 10;
-    appState.deferrals = (appState.deferrals || 0) + 1;
-    saveUserData();
-    checkAchievements();
-    
-    showToast('🎉 Ótima decisão! +10 pontos por adiar o gasto');
-    hideReflectionModal();
-    document.getElementById('transactionForm').reset();
-    pendingTransaction = null;
-}
-
-// Confirmar gasto
-function handleConfirmExpense() {
-    if (pendingTransaction) {
-        addTransaction(pendingTransaction);
-        pendingTransaction = null;
-    }
-    hideReflectionModal();
-    document.getElementById('transactionForm').reset();
 }
 
 // Adicionar transação
@@ -280,42 +144,61 @@ function addTransaction({ amount, description, type }) {
     };
     
     appState.transactions.push(transaction);
+    
+    // Bonificar milhas
+    addMiles(1, 'Transação registrada');
+    
     saveUserData();
     updateDashboard();
-    
     showToast(`✓ Transação adicionada: ${description}`);
 }
 
-// Calcular juros
-function handleInterestCalculation(e) {
-    e.preventDefault();
+// Adicionar milhas
+function addMiles(miles, reason = 'Boa conduta financeira') {
+    appState.miles += miles;
+    saveUserData();
+    updateMilesDisplay();
+    showToast(`✈️ +${miles} milhas! ${reason}`);
+}
+
+// Atualizar display de milhas
+function updateMilesDisplay() {
+    const milesEl = document.getElementById('userMiles');
+    const countEl = document.getElementById('milesCount');
+    const valueEl = document.getElementById('milesValue');
+    const btnConvert = document.getElementById('btnConvertMiles');
     
-    const amount = parseFloat(document.getElementById('loanAmount').value);
-    const installments = parseInt(document.getElementById('installments').value);
-    const rate = parseFloat(document.getElementById('interestRate').value) / 100;
+    const milesValue = appState.miles * MILES_RATE;
     
-    // Cálculo de juros compostos
-    const installmentValue = (amount * rate * Math.pow(1 + rate, installments)) / 
-                            (Math.pow(1 + rate, installments) - 1);
-    const totalWithInterest = installmentValue * installments;
-    const totalInterest = totalWithInterest - amount;
+    if (milesEl) milesEl.textContent = `✈️ ${appState.miles} milhas`;
+    if (countEl) countEl.textContent = `${appState.miles} milhas`;
+    if (valueEl) valueEl.textContent = `≈ ${formatCurrency(milesValue)}`;
     
-    // Atualizar resultados
-    document.getElementById('cashValue').textContent = formatCurrency(amount);
-    document.getElementById('totalWithInterest').textContent = formatCurrency(totalWithInterest);
-    document.getElementById('totalInterest').textContent = formatCurrency(totalInterest);
-    document.getElementById('installmentValue').textContent = formatCurrency(installmentValue);
+    if (btnConvert) {
+        btnConvert.disabled = milesValue < MIN_INVESTMENT;
+        btnConvert.style.opacity = milesValue < MIN_INVESTMENT ? '0.5' : '1';
+    }
+}
+
+// Atualizar painel do fundo
+function updateFundPanel() {
+    const balanceEl = document.getElementById('fundBalance');
+    const returnEl = document.getElementById('monthlyReturn');
+    const milesEl = document.getElementById('totalMilesConverted');
     
-    // Mostrar resultados
-    document.getElementById('interestResults').classList.remove('hidden');
+    if (balanceEl) balanceEl.textContent = formatCurrency(appState.fundBalance);
+    if (returnEl) returnEl.textContent = '+' + formatCurrency(appState.monthlyReturn);
+    if (milesEl) milesEl.textContent = `✈️ ${appState.totalMilesConverted}`;
     
-    // Atualizar gráfico
-    updateInterestChart(amount, totalWithInterest);
+    if (appState.fundBalance > 0) {
+        renderFundChart();
+    }
 }
 
 // Renderizar conquistas
 function renderAchievements() {
     const grid = document.getElementById('achievementsGrid');
+    if (!grid) return;
     
     grid.innerHTML = ACHIEVEMENTS.map(achievement => {
         const isUnlocked = appState.achievements.includes(achievement.id);
@@ -324,10 +207,6 @@ function renderAchievements() {
                 <div class="achievement-icon">${achievement.icon}</div>
                 <div class="achievement-title">${achievement.title}</div>
                 <div class="achievement-description">${achievement.description}</div>
-                <span class="achievement-difficulty difficulty-${achievement.difficulty}">
-                    ${achievement.difficulty === 'easy' ? '🥉 Simples' : 
-                      achievement.difficulty === 'medium' ? '🥈 Média' : '🥇 Difícil'}
-                </span>
             </div>
         `;
     }).join('');
@@ -347,11 +226,114 @@ function checkAchievements() {
     if (newAchievements.length > 0) {
         saveUserData();
         renderAchievements();
-        
-        newAchievements.forEach(achievement => {
-            showToast(`🎉 Conquista desbloqueada: ${achievement.title}!`);
-        });
+        newAchievements.forEach(a => showToast(`🎉 Conquista: ${a.title}!`));
     }
+}
+
+// Verificar rendimento mensal
+function checkMonthlyReturn() {
+    const now = Date.now();
+    const lastUpdate = new Date(appState.lastFundUpdate);
+    const current = new Date(now);
+    
+    const monthsPassed = (current.getMonth() - lastUpdate.getMonth()) + 
+                        (12 * (current.getFullYear() - lastUpdate.getFullYear()));
+    
+    if (monthsPassed >= 1 && appState.fundBalance > 0) {
+        applyMonthlyReturn();
+    }
+}
+
+// Aplicar rendimento mensal
+function applyMonthlyReturn() {
+    const monthlyReturn = appState.fundBalance * (FUND_ANNUAL_RATE / 12);
+    appState.monthlyReturn = monthlyReturn;
+    appState.fundBalance += monthlyReturn;
+    appState.lastFundUpdate = Date.now();
+    
+    appState.fundHistory.push({
+        date: Date.now(),
+        type: 'return',
+        value: monthlyReturn,
+        balance: appState.fundBalance
+    });
+    
+    saveUserData();
+    updateFundPanel();
+    showToast(`💰 Rendimento mensal: +${formatCurrency(monthlyReturn)}`);
+}
+
+// Modal de conversão de milhas
+function mostrarModalConversaoMilhas() {
+    const milesValue = appState.miles * MILES_RATE;
+    
+    if (appState.miles === 0) {
+        showToast('❌ Você não possui milhas para converter');
+        return;
+    }
+    
+    if (milesValue < MIN_INVESTMENT) {
+        showToast(`⚠️ Acumule mais ${Math.ceil((MIN_INVESTMENT - milesValue) / MILES_RATE)} milhas`);
+        return;
+    }
+    
+    const modal = document.getElementById('investmentModal');
+    modal.querySelector('.modal-miles').textContent = appState.miles;
+    modal.querySelector('.modal-value').textContent = formatCurrency(milesValue);
+    modal.classList.add('show');
+}
+
+function fecharModalInvestimento() {
+    document.getElementById('investmentModal').classList.remove('show');
+}
+
+function confirmarConversao() {
+    const milesValue = appState.miles * MILES_RATE;
+    
+    appState.fundBalance += milesValue;
+    appState.totalMilesConverted += appState.miles;
+    appState.miles = 0;
+    
+    appState.fundHistory.push({
+        date: Date.now(),
+        type: 'deposit',
+        value: milesValue,
+        balance: appState.fundBalance
+    });
+    
+    saveUserData();
+    updateDashboard();
+    fecharModalInvestimento();
+    
+    showToast(`✅ R$ ${milesValue.toFixed(2)} investidos com sucesso!`);
+    checkAchievements();
+}
+
+// Modal de projeção
+function mostrarProjecao() {
+    const modal = document.getElementById('projectionModal');
+    const monthlyRate = FUND_ANNUAL_RATE / 12;
+    
+    const proj3m = appState.fundBalance * Math.pow(1 + monthlyRate, 3);
+    const proj6m = appState.fundBalance * Math.pow(1 + monthlyRate, 6);
+    const proj1y = appState.fundBalance * Math.pow(1 + monthlyRate, 12);
+    
+    modal.querySelector('.proj-3m').textContent = formatCurrency(proj3m);
+    modal.querySelector('.proj-6m').textContent = formatCurrency(proj6m);
+    modal.querySelector('.proj-1y').textContent = formatCurrency(proj1y);
+    
+    modal.classList.add('show');
+    
+    setTimeout(() => renderProjectionChart(proj3m, proj6m, proj1y), 100);
+}
+
+function fecharModalProjecao() {
+    document.getElementById('projectionModal').classList.remove('show');
+}
+
+// Converter milhas em investimento (função global)
+function converterMilhasEmInvestimento() {
+    mostrarModalConversaoMilhas();
 }
 
 // Exportar dados
@@ -360,12 +342,9 @@ function exportData() {
         user: appState.currentUser.name,
         exportDate: new Date().toISOString(),
         transactions: appState.transactions,
-        achievements: appState.achievements.map(id => {
-            const achievement = ACHIEVEMENTS.find(a => a.id === id);
-            return achievement ? achievement.title : id;
-        }),
-        points: appState.points,
-        balance: calculateBalance(appState.transactions)
+        fundBalance: appState.fundBalance,
+        miles: appState.miles,
+        achievements: appState.achievements
     };
     
     const dataStr = JSON.stringify(data, null, 2);
@@ -377,18 +356,17 @@ function exportData() {
     link.download = `cashview_export_${Date.now()}.json`;
     link.click();
     
-    showToast('📊 Dados exportados com sucesso!');
+    showToast('📊 Dados exportados!');
 }
 
 // Mostrar toast
 function showToast(message) {
     const toast = document.getElementById('toast');
+    if (!toast) return;
+    
     toast.textContent = message;
     toast.classList.add('show');
-    
-    setTimeout(() => {
-        toast.classList.remove('show');
-    }, 3000);
+    setTimeout(() => toast.classList.remove('show'), 3000);
 }
 
 // Formatar moeda
@@ -410,3 +388,102 @@ function formatDate(timestamp) {
         minute: '2-digit'
     }).format(date);
 }
+
+// Setup event listeners
+function setupEventListeners() {
+    const logoutBtn = document.getElementById('btnLogout');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', () => {
+            sessionStorage.removeItem('currentUser');
+            window.location.href = 'login.html';
+        });
+    }
+    
+    const transactionForm = document.getElementById('transactionForm');
+    if (transactionForm) {
+        transactionForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const amount = parseFloat(document.getElementById('amount').value);
+            const description = document.getElementById('description').value;
+            const type = document.getElementById('type').value;
+            
+            if (type === 'expense' && amount >= 100) {
+                showReflectionModal(amount, description, type);
+            } else {
+                addTransaction({ amount, description, type });
+                e.target.reset();
+            }
+        });
+    }
+    
+    const interestForm = document.getElementById('interestForm');
+    if (interestForm) {
+        interestForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            calculateInterest();
+            addMiles(5, 'Usou simulador de juros');
+        });
+    }
+    
+    const btnExport = document.getElementById('btnExport');
+    if (btnExport) {
+        btnExport.addEventListener('click', exportData);
+    }
+}
+
+// Modal de reflexão
+let pendingTransaction = null;
+
+function showReflectionModal(amount, description, type) {
+    pendingTransaction = { amount, description, type };
+    const modal = document.getElementById('reflectionModal');
+    modal.querySelector('#reflectionAmount').textContent = formatCurrency(amount);
+    modal.classList.add('show');
+    
+    document.getElementById('btnDefer').onclick = () => {
+        addMiles(10, 'Gasto adiado com reflexão');
+        modal.classList.remove('show');
+        document.getElementById('transactionForm').reset();
+        pendingTransaction = null;
+    };
+    
+    document.getElementById('btnConfirm').onclick = () => {
+        if (pendingTransaction) {
+            addTransaction(pendingTransaction);
+            document.getElementById('transactionForm').reset();
+        }
+        modal.classList.remove('show');
+        pendingTransaction = null;
+    };
+}
+
+// Calcular juros
+function calculateInterest() {
+    const amount = parseFloat(document.getElementById('loanAmount').value);
+    const installments = parseInt(document.getElementById('installments').value);
+    const rate = parseFloat(document.getElementById('interestRate').value) / 100;
+    
+    const installmentValue = (amount * rate * Math.pow(1 + rate, installments)) / 
+                            (Math.pow(1 + rate, installments) - 1);
+    const totalWithInterest = installmentValue * installments;
+    const totalInterest = totalWithInterest - amount;
+    
+    document.getElementById('cashValue').textContent = formatCurrency(amount);
+    document.getElementById('totalWithInterest').textContent = formatCurrency(totalWithInterest);
+    document.getElementById('totalInterest').textContent = formatCurrency(totalInterest);
+    document.getElementById('installmentValue').textContent = formatCurrency(installmentValue);
+    
+    document.getElementById('interestResults').classList.remove('hidden');
+    renderInterestChart(amount, totalWithInterest);
+}
+
+// Inicialização
+document.addEventListener('DOMContentLoaded', () => {
+    appState.currentUser = checkAuth();
+    if (!appState.currentUser) return;
+    
+    loadUserData();
+    setupEventListeners();
+    updateDashboard();
+    renderAchievements();
+});
