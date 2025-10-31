@@ -1,39 +1,24 @@
 /* ========================================
-   CASH VIEW - SISTEMA DE DESIGN
+   CASH VIEW - STYLE.CSS (NA RAIZ)
    ======================================== */
 
 :root {
-    /* Cores Principais */
     --primary-color: #10b981;
     --secondary-color: #f59e0b;
     --accent-color: #3b82f6;
     --danger-color: #ef4444;
     --success-color: #10b981;
-    
-    /* Cores de Fundo */
     --bg-dark: #0f172a;
     --bg-medium: #1e293b;
     --bg-light: #334155;
     --bg-card: #1e293b;
-    
-    /* Texto */
     --text-primary: #f1f5f9;
     --text-secondary: #94a3b8;
     --text-muted: #64748b;
-    
-    /* Sombras */
-    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
-    --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
-    --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.2);
-    --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.3);
-    
-    /* Bordas */
     --border-radius: 12px;
     --border-radius-sm: 8px;
     --border-color: #334155;
-    
-    /* Transições */
-    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition: all 0.3s ease;
 }
 
 * {
@@ -43,17 +28,14 @@
 }
 
 body {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-family: 'Inter', sans-serif;
     background: linear-gradient(135deg, var(--bg-dark) 0%, #1a1f3a 100%);
     color: var(--text-primary);
     line-height: 1.6;
     min-height: 100vh;
 }
 
-/* ========================================
-   NAVBAR
-   ======================================== */
-
+/* NAVBAR */
 .navbar {
     background: var(--bg-medium);
     border-bottom: 1px solid var(--border-color);
@@ -61,7 +43,6 @@ body {
     position: sticky;
     top: 0;
     z-index: 100;
-    backdrop-filter: blur(10px);
 }
 
 .nav-container {
@@ -83,14 +64,12 @@ body {
 
 .logo {
     font-size: 2rem;
-    filter: drop-shadow(0 0 8px rgba(16, 185, 129, 0.5));
 }
 
 .brand-name {
     background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    background-clip: text;
 }
 
 .nav-menu {
@@ -104,23 +83,27 @@ body {
     color: var(--text-secondary);
     text-decoration: none;
     font-weight: 500;
-    transition: var(--transition);
     padding: 0.5rem 1rem;
     border-radius: var(--border-radius-sm);
+    transition: var(--transition);
 }
 
-.nav-link:hover,
-.nav-link.active {
+.nav-link:hover, .nav-link.active {
     color: var(--primary-color);
     background: rgba(16, 185, 129, 0.1);
 }
 
-.user-name {
+.user-name, .user-miles {
     color: var(--text-primary);
     font-weight: 600;
     padding: 0.5rem 1rem;
     background: var(--bg-light);
     border-radius: var(--border-radius-sm);
+}
+
+.user-miles {
+    background: rgba(245, 158, 11, 0.2);
+    color: var(--secondary-color);
 }
 
 .btn-logout {
@@ -137,13 +120,9 @@ body {
 .btn-logout:hover {
     background: #dc2626;
     transform: translateY(-2px);
-    box-shadow: var(--shadow-md);
 }
 
-/* ========================================
-   DASHBOARD
-   ======================================== */
-
+/* DASHBOARD */
 .dashboard {
     padding: 3rem 0;
 }
@@ -166,7 +145,6 @@ body {
     background: linear-gradient(135deg, #f59e0b, var(--primary-color), var(--accent-color));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    background-clip: text;
 }
 
 .subtitle {
@@ -174,10 +152,7 @@ body {
     font-size: 1.25rem;
 }
 
-/* ========================================
-   CARDS GRID
-   ======================================== */
-
+/* CARDS */
 .cards-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
@@ -189,13 +164,13 @@ body {
     border: 1px solid var(--border-color);
     border-radius: var(--border-radius);
     padding: 1.5rem;
-    box-shadow: var(--shadow-lg);
+    box-shadow: 0 10px 15px rgba(0,0,0,0.2);
     transition: var(--transition);
 }
 
 .card:hover {
     transform: translateY(-4px);
-    box-shadow: var(--shadow-xl);
+    box-shadow: 0 20px 25px rgba(0,0,0,0.3);
     border-color: var(--primary-color);
 }
 
@@ -205,6 +180,17 @@ body {
 
 .card-balance {
     background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
+    border: none;
+}
+
+.card-fund {
+    background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%);
+    border: none;
+    grid-column: 1 / -1;
+}
+
+.card-miles {
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
     border: none;
 }
 
@@ -221,14 +207,16 @@ body {
     color: var(--text-primary);
 }
 
-.card-body {
-    color: var(--text-secondary);
+.fund-badge {
+    background: rgba(16, 185, 129, 0.2);
+    color: var(--success-color);
+    padding: 0.25rem 0.75rem;
+    border-radius: 1rem;
+    font-size: 0.8rem;
+    font-weight: 600;
 }
 
-/* ========================================
-   BALANCE CARD
-   ======================================== */
-
+/* BALANCE */
 .balance-amount {
     font-size: 2.5rem;
     font-weight: 700;
@@ -252,10 +240,107 @@ body {
     font-weight: 600;
 }
 
-/* ========================================
-   FORMS
-   ======================================== */
+/* FUND */
+.fund-main-info {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
 
+.fund-balance {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.fund-label {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.9rem;
+}
+
+.fund-value {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: white;
+}
+
+.fund-stats {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+}
+
+.stat-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 1rem;
+    border-radius: var(--border-radius-sm);
+}
+
+.stat-label {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.8rem;
+}
+
+.stat-value {
+    color: white;
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+.stat-value.success {
+    color: var(--success-color);
+}
+
+.stat-percent {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.85rem;
+}
+
+.fund-chart-container {
+    background: rgba(0, 0, 0, 0.2);
+    padding: 1.5rem;
+    border-radius: var(--border-radius-sm);
+    margin-bottom: 1.5rem;
+    height: 300px;
+}
+
+.fund-actions {
+    display: flex;
+    gap: 1rem;
+}
+
+/* MILES */
+.miles-display {
+    text-align: center;
+    padding: 1.5rem;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: var(--border-radius-sm);
+    margin-bottom: 1rem;
+}
+
+.miles-count {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: white;
+}
+
+.miles-value {
+    font-size: 1.2rem;
+    color: rgba(255, 255, 255, 0.8);
+    margin-top: 0.5rem;
+}
+
+.miles-info {
+    background: rgba(0, 0, 0, 0.2);
+    padding: 1rem;
+    border-radius: var(--border-radius-sm);
+}
+
+/* FORMS */
 .form-group {
     margin-bottom: 1rem;
 }
@@ -267,8 +352,7 @@ body {
     font-weight: 500;
 }
 
-.form-group input,
-.form-group select {
+.form-group input, .form-group select {
     width: 100%;
     padding: 0.75rem;
     background: var(--bg-light);
@@ -279,8 +363,7 @@ body {
     transition: var(--transition);
 }
 
-.form-group input:focus,
-.form-group select:focus {
+.form-group input:focus, .form-group select:focus {
     outline: none;
     border-color: var(--primary-color);
     box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
@@ -293,14 +376,7 @@ body {
     align-items: end;
 }
 
-.interest-form {
-    margin-bottom: 2rem;
-}
-
-/* ========================================
-   BUTTONS
-   ======================================== */
-
+/* BUTTONS */
 .btn {
     padding: 0.75rem 1.5rem;
     border: none;
@@ -319,7 +395,6 @@ body {
 .btn-primary:hover {
     background: #059669;
     transform: translateY(-2px);
-    box-shadow: var(--shadow-md);
 }
 
 .btn-secondary {
@@ -330,7 +405,6 @@ body {
 .btn-secondary:hover {
     background: #d97706;
     transform: translateY(-2px);
-    box-shadow: var(--shadow-md);
 }
 
 .btn-sm {
@@ -338,10 +412,7 @@ body {
     font-size: 0.875rem;
 }
 
-/* ========================================
-   INTEREST RESULTS
-   ======================================== */
-
+/* RESULTS */
 .interest-results {
     background: var(--bg-light);
     padding: 1.5rem;
@@ -390,10 +461,6 @@ body {
     color: var(--text-primary);
 }
 
-/* ========================================
-   COMPARISON TEXT
-   ======================================== */
-
 .comparison-text {
     margin-top: 1rem;
     padding: 1rem;
@@ -403,10 +470,7 @@ body {
     text-align: center;
 }
 
-/* ========================================
-   TRANSACTION LIST
-   ======================================== */
-
+/* TRANSACTIONS */
 .transaction-list {
     max-height: 500px;
     overflow-y: auto;
@@ -463,10 +527,7 @@ body {
     color: var(--text-muted);
 }
 
-/* ========================================
-   ACHIEVEMENTS
-   ======================================== */
-
+/* ACHIEVEMENTS */
 .achievements-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
@@ -487,12 +548,6 @@ body {
     opacity: 1;
     border-color: var(--secondary-color);
     background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(16, 185, 129, 0.1));
-    animation: unlockPulse 0.5s ease-out;
-}
-
-@keyframes unlockPulse {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.05); }
 }
 
 .achievement-icon {
@@ -511,34 +566,7 @@ body {
     color: var(--text-secondary);
 }
 
-.achievement-difficulty {
-    display: inline-block;
-    margin-top: 0.5rem;
-    padding: 0.25rem 0.75rem;
-    border-radius: 1rem;
-    font-size: 0.75rem;
-    font-weight: 600;
-}
-
-.difficulty-easy {
-    background: rgba(16, 185, 129, 0.2);
-    color: var(--success-color);
-}
-
-.difficulty-medium {
-    background: rgba(245, 158, 11, 0.2);
-    color: var(--secondary-color);
-}
-
-.difficulty-hard {
-    background: rgba(239, 68, 68, 0.2);
-    color: var(--danger-color);
-}
-
-/* ========================================
-   MODAL
-   ======================================== */
-
+/* MODAL */
 .modal {
     display: none;
     position: fixed;
@@ -547,7 +575,6 @@ body {
     width: 100%;
     height: 100%;
     background: rgba(0, 0, 0, 0.8);
-    backdrop-filter: blur(5px);
     z-index: 1000;
     align-items: center;
     justify-content: center;
@@ -560,21 +587,9 @@ body {
 .modal-content {
     background: var(--bg-card);
     border-radius: var(--border-radius);
-    max-width: 500px;
+    max-width: 600px;
     width: 90%;
-    box-shadow: var(--shadow-xl);
-    animation: modalSlideIn 0.3s ease-out;
-}
-
-@keyframes modalSlideIn {
-    from {
-        opacity: 0;
-        transform: translateY(-50px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+    box-shadow: 0 20px 25px rgba(0,0,0,0.3);
 }
 
 .modal-header {
@@ -589,7 +604,76 @@ body {
 
 .modal-body {
     padding: 2rem 1.5rem;
-    text-align: center;
+}
+
+.modal-footer {
+    padding: 1.5rem;
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+}
+
+.conversion-display {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 2rem;
+    padding: 2rem;
+    background: var(--bg-light);
+    border-radius: var(--border-radius-sm);
+    margin-bottom: 1.5rem;
+}
+
+.conversion-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.conversion-label {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+.conversion-value {
+    color: var(--text-primary);
+    font-size: 1.8rem;
+    font-weight: 700;
+}
+
+.conversion-arrow {
+    font-size: 2rem;
+    color: var(--primary-color);
+}
+
+.projections-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.projection-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 1rem;
+    background: var(--bg-light);
+    border-radius: var(--border-radius-sm);
+}
+
+.proj-period {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+.proj-value {
+    color: var(--success-color);
+    font-size: 1.3rem;
+    font-weight: 700;
 }
 
 .reflection-question {
@@ -608,21 +692,9 @@ body {
     font-size: 2rem;
     font-weight: 700;
     color: var(--danger-color);
-    margin-bottom: 1rem;
 }
 
-.modal-footer {
-    padding: 1.5rem;
-    border-top: 1px solid var(--border-color);
-    display: flex;
-    gap: 1rem;
-    justify-content: center;
-}
-
-/* ========================================
-   TOAST NOTIFICATION
-   ======================================== */
-
+/* TOAST */
 .toast {
     position: fixed;
     bottom: 2rem;
@@ -631,7 +703,7 @@ body {
     color: var(--text-primary);
     padding: 1rem 1.5rem;
     border-radius: var(--border-radius);
-    box-shadow: var(--shadow-xl);
+    box-shadow: 0 20px 25px rgba(0,0,0,0.3);
     border-left: 4px solid var(--primary-color);
     z-index: 2000;
     opacity: 0;
@@ -644,10 +716,7 @@ body {
     transform: translateX(0);
 }
 
-/* ========================================
-   AUTH PAGES
-   ======================================== */
-
+/* AUTH PAGES */
 .auth-container {
     min-height: 100vh;
     display: flex;
@@ -663,7 +732,7 @@ body {
     padding: 3rem;
     max-width: 450px;
     width: 100%;
-    box-shadow: var(--shadow-xl);
+    box-shadow: 0 20px 25px rgba(0,0,0,0.3);
 }
 
 .auth-header {
@@ -708,54 +777,10 @@ body {
     text-decoration: underline;
 }
 
-/* ========================================
-   ABOUT PAGE
-   ======================================== */
-
-.about-section {
-    background: var(--bg-card);
-    border: 1px solid var(--border-color);
-    border-radius: var(--border-radius);
-    padding: 2rem;
-    margin-bottom: 2rem;
-}
-
-.about-section h2 {
-    color: var(--primary-color);
-    margin-bottom: 1rem;
-}
-
-.team-photo {
-    width: 100%;
-    max-width: 800px;
-    border-radius: var(--border-radius);
-    margin: 2rem auto;
-    display: block;
-    box-shadow: var(--shadow-lg);
-}
-
-.team-names {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1rem;
-    margin-top: 1.5rem;
-}
-
-.team-member {
-    background: var(--bg-light);
-    padding: 1rem;
-    border-radius: var(--border-radius-sm);
-    text-align: center;
-    font-weight: 600;
-}
-
-/* ========================================
-   RESPONSIVE
-   ======================================== */
-
+/* RESPONSIVE */
 @media (max-width: 768px) {
     .nav-menu {
-        gap: 1rem;
+        gap: 0.5rem;
         font-size: 0.875rem;
     }
     
@@ -767,17 +792,16 @@ body {
         grid-template-columns: 1fr;
     }
     
-    .form-row {
+    .fund-main-info {
         grid-template-columns: 1fr;
     }
     
-    .modal-footer {
+    .fund-actions {
         flex-direction: column;
     }
     
     .toast {
         right: 1rem;
         left: 1rem;
-        bottom: 1rem;
     }
 }
