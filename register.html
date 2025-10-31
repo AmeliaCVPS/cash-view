@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cash View - Cadastro</title>
-    <link rel="stylesheet" href="styles/style.css">
+    <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
@@ -19,61 +19,33 @@
             <form id="registerForm" class="auth-form">
                 <div class="form-group">
                     <label for="name">Nome Completo</label>
-                    <input 
-                        type="text" 
-                        id="name" 
-                        placeholder="Seu nome" 
-                        required
-                        autocomplete="name"
-                    >
+                    <input type="text" id="name" placeholder="Seu nome" required>
                 </div>
                 
                 <div class="form-group">
                     <label for="email">E-mail</label>
-                    <input 
-                        type="email" 
-                        id="email" 
-                        placeholder="seu@email.com" 
-                        required
-                        autocomplete="email"
-                    >
+                    <input type="email" id="email" placeholder="seu@email.com" required>
                 </div>
                 
                 <div class="form-group">
                     <label for="password">Senha</label>
-                    <input 
-                        type="password" 
-                        id="password" 
-                        placeholder="Mínimo 6 caracteres" 
-                        required
-                        autocomplete="new-password"
-                        minlength="6"
-                    >
+                    <input type="password" id="password" placeholder="Mínimo 6 caracteres" required minlength="6">
                 </div>
                 
                 <div class="form-group">
                     <label for="confirmPassword">Confirmar Senha</label>
-                    <input 
-                        type="password" 
-                        id="confirmPassword" 
-                        placeholder="Digite a senha novamente" 
-                        required
-                        autocomplete="new-password"
-                        minlength="6"
-                    >
+                    <input type="password" id="confirmPassword" placeholder="Digite a senha novamente" required minlength="6">
                 </div>
                 
-                <button type="submit" class="btn btn-primary" style="width: 100%;">
-                    Criar Conta
-                </button>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Criar Conta</button>
             </form>
             
             <div class="auth-footer">
-                <p>Já tem uma conta? <a href="login.html">Faça login aqui</a></p>
+                <p>Já tem conta? <a href="login.html">Faça login aqui</a></p>
             </div>
         </div>
     </div>
     
-    <script src="scripts/auth.js"></script>
+    <script src="auth.js"></script>
 </body>
 </html>
