@@ -4,30 +4,35 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cash View - Dashboard</title>
-    <link rel="stylesheet" href="styles/style.css">
+    <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
 </head>
 <body>
-    <!-- Navbar -->
-   <ul class="nav-menu">
-    <li><a href="index.html" class="nav-link active">Início</a></li>
-    <li><a href="investimentos.html" class="nav-link">Investimentos</a></li>
-    <li><a href="about.html" class="nav-link">Sobre Nós</a></li>
-    <li><span class="user-name" id="userName"></span></li>
-    <li><button class="btn-logout" id="btnLogout">Sair</button></li>
-</ul>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <span class="logo">💰</span>
+                <span class="brand-name">Cash View</span>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="index.html" class="nav-link active">Início</a></li>
+                <li><a href="investimentos.html" class="nav-link">Investimentos</a></li>
+                <li><a href="about.html" class="nav-link">Sobre Nós</a></li>
+                <li><span class="user-name" id="userName"></span></li>
+                <li><span class="user-miles" id="userMiles">✈️ 0 milhas</span></li>
+                <li><button class="btn-logout" id="btnLogout">Sair</button></li>
+            </ul>
+        </div>
+    </nav>
 
-    <!-- Main Dashboard -->
     <main class="dashboard">
         <div class="container">
-            <!-- Header -->
             <header class="dashboard-header">
                 <h1>Cash View — Visualize seu Dinheiro</h1>
                 <p class="subtitle">Transforme o invisível em visível. Tome decisões financeiras conscientes.</p>
             </header>
 
-            <!-- Cards Grid -->
             <div class="cards-grid">
                 <!-- Saldo Atual -->
                 <div class="card card-balance">
@@ -40,6 +45,61 @@
                             <span class="income">↑ Receitas: R$ <span id="totalIncome">0,00</span></span>
                             <span class="expense">↓ Despesas: R$ <span id="totalExpense">0,00</span></span>
                         </div>
+                    </div>
+                </div>
+
+                <!-- Fundo Cash View -->
+                <div class="card card-fund">
+                    <div class="card-header">
+                        <h3>💼 Fundo Cash View</h3>
+                        <span class="fund-badge">Tesouro Selic</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="fund-main-info">
+                            <div class="fund-balance">
+                                <span class="fund-label">Saldo Investido</span>
+                                <span class="fund-value" id="fundBalance">R$ 0,00</span>
+                            </div>
+                            <div class="fund-stats">
+                                <div class="stat-item">
+                                    <span class="stat-label">Rendimento Mensal</span>
+                                    <span class="stat-value success" id="monthlyReturn">+R$ 0,00</span>
+                                    <span class="stat-percent">(+0,83%)</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-label">Milhas Convertidas</span>
+                                    <span class="stat-value" id="totalMilesConverted">✈️ 0</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="fund-chart-container">
+                            <canvas id="fundGrowthChart"></canvas>
+                        </div>
+                        <div class="fund-actions">
+                            <button class="btn btn-primary" onclick="mostrarModalConversaoMilhas()">✈️ Converter Milhas</button>
+                            <button class="btn btn-secondary" onclick="mostrarProjecao()">📊 Ver Projeção</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card de Milhas -->
+                <div class="card card-miles">
+                    <div class="card-header">
+                        <h3>✈️ Suas Milhas</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="miles-display">
+                            <div class="miles-count" id="milesCount">0 milhas</div>
+                            <div class="miles-value" id="milesValue">≈ R$ 0,00</div>
+                        </div>
+                        <div class="miles-info">
+                            <p style="color: rgba(255,255,255,0.9); font-size: 0.9rem;">
+                                💡 Ganhe milhas praticando boa conduta financeira! Cada milha vale R$ 0,05.
+                            </p>
+                        </div>
+                        <button class="btn btn-primary" style="width: 100%; margin-top: 1rem;" onclick="converterMilhasEmInvestimento()" id="btnConvertMiles">
+                            💰 Converter em Investimento
+                        </button>
                     </div>
                 </div>
 
@@ -134,18 +194,17 @@
                             </div>
                             <canvas id="interestChart"></canvas>
                             <div class="educational-note">
-                                💡 <strong>Educação Financeira:</strong> Juros pequenos se acumulam em grandes valores no longo prazo. 
-                                Sempre que possível, prefira pagamentos à vista ou menor número de parcelas.
+                                💡 <strong>Educação Financeira:</strong> Juros pequenos se acumulam em grandes valores no longo prazo.
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Histórico de Transações -->
+                <!-- Histórico -->
                 <div class="card card-full">
                     <div class="card-header">
                         <h3>📜 Histórico de Transações</h3>
-                        <button class="btn btn-sm" id="btnExport">📊 Exportar Dados</button>
+                        <button class="btn btn-sm" id="btnExport">📊 Exportar</button>
                     </div>
                     <div class="card-body">
                         <div class="transaction-list" id="transactionList">
@@ -167,6 +226,64 @@
         </div>
     </main>
 
+    <!-- Modal de Conversão de Milhas -->
+    <div class="modal" id="investmentModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>💼 Converter Milhas em Investimento</h2>
+            </div>
+            <div class="modal-body">
+                <div class="conversion-display">
+                    <div class="conversion-item">
+                        <span class="conversion-label">Suas Milhas:</span>
+                        <span class="conversion-value modal-miles">0</span>
+                    </div>
+                    <div class="conversion-arrow">→</div>
+                    <div class="conversion-item">
+                        <span class="conversion-label">Valor a Investir:</span>
+                        <span class="conversion-value modal-value">R$ 0,00</span>
+                    </div>
+                </div>
+                <div class="educational-note">
+                    💡 <strong>Investimento Automático:</strong> Seu valor será investido no Fundo Cash View (Tesouro Selic) com rendimento de ~10% ao ano.
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="fecharModalInvestimento()">Cancelar</button>
+                <button class="btn btn-primary" onclick="confirmarConversao()">✓ Confirmar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Projeção -->
+    <div class="modal" id="projectionModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>📊 Projeção de Rendimento</h2>
+            </div>
+            <div class="modal-body">
+                <div class="projections-grid">
+                    <div class="projection-item">
+                        <span class="proj-period">3 meses</span>
+                        <span class="proj-value proj-3m">R$ 0,00</span>
+                    </div>
+                    <div class="projection-item">
+                        <span class="proj-period">6 meses</span>
+                        <span class="proj-value proj-6m">R$ 0,00</span>
+                    </div>
+                    <div class="projection-item">
+                        <span class="proj-period">1 ano</span>
+                        <span class="proj-value proj-1y">R$ 0,00</span>
+                    </div>
+                </div>
+                <canvas id="projectionChart"></canvas>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" onclick="fecharModalProjecao()">Fechar</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Modal de Reflexão -->
     <div class="modal" id="reflectionModal">
         <div class="modal-content">
@@ -175,22 +292,20 @@
             </div>
             <div class="modal-body">
                 <p class="reflection-question">Você realmente precisa desse gasto agora?</p>
-                <p class="reflection-subtext">Essa compra te aproxima ou te afasta das suas metas financeiras?</p>
+                <p class="reflection-subtext">Essa compra te aproxima ou te afasta das suas metas?</p>
                 <div class="reflection-amount" id="reflectionAmount"></div>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-secondary" id="btnDefer">⏰ Adiar (+10 pontos)</button>
-                <button class="btn btn-primary" id="btnConfirm">✓ Confirmar Gasto</button>
+                <button class="btn btn-secondary" id="btnDefer">⏰ Adiar (+10 milhas)</button>
+                <button class="btn btn-primary" id="btnConfirm">✓ Confirmar</button>
             </div>
         </div>
     </div>
 
-    <!-- Toast Notification -->
     <div class="toast" id="toast"></div>
 
-    <script src="scripts/auth.js"></script>
-    <script src="scripts/charts.js"></script>
-    <script src="scripts/main.js"></script>
+    <script src="auth.js"></script>
+    <script src="charts.js"></script>
+    <script src="main.js"></script>
 </body>
-
 </html>
