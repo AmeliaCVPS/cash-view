@@ -28,35 +28,12 @@
     <main class="dashboard">
         <div class="container">
             <header class="dashboard-header">
-                <h1>💹 Investimentos Inteligentes</h1>
-                <p class="subtitle">Aprenda a fazer seu dinheiro trabalhar para você</p>
+                <h1>💹 Guia Completo de Investimentos</h1>
+                <p class="subtitle">Aprenda sobre os principais tipos de investimentos e faça seu dinheiro trabalhar para você</p>
             </header>
 
-            <div class="card card-full">
-                <div class="card-header">
-                    <h3>🎓 Renda Fixa vs Renda Variável</h3>
-                </div>
-                <div class="card-body">
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
-                        <div style="background: var(--bg-light); padding: 1.5rem; border-radius: var(--border-radius-sm); border-left: 4px solid var(--success-color);">
-                            <h4 style="color: var(--success-color); margin-bottom: 0.5rem;">🔒 Renda Fixa</h4>
-                            <p style="color: var(--text-secondary);">
-                                Retorno previsível. Exemplos: Tesouro Direto, CDB, LCI/LCA. 
-                                <strong>Menor risco.</strong>
-                            </p>
-                        </div>
-                        <div style="background: var(--bg-light); padding: 1.5rem; border-radius: var(--border-radius-sm); border-left: 4px solid var(--secondary-color);">
-                            <h4 style="color: var(--secondary-color); margin-bottom: 0.5rem;">📈 Renda Variável</h4>
-                            <p style="color: var(--text-secondary);">
-                                Retorno oscila. Exemplos: Ações, Fundos, Criptomoedas. 
-                                <strong>Maior potencial.</strong>
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="card card-full">
+            <!-- Simulador de Investimentos -->
+            <div class="card card-full" style="background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%); border: none; margin-bottom: 3rem;">
                 <div class="card-header">
                     <h3>🧮 Simulador de Investimentos</h3>
                 </div>
@@ -64,56 +41,521 @@
                     <form id="investSimulator" class="interest-form">
                         <div class="form-row">
                             <div class="form-group">
-                                <label>Valor Inicial (R$)</label>
-                                <input type="number" id="investAmount" placeholder="1000" required step="0.01">
+                                <label style="color: rgba(255,255,255,0.9);">Valor Inicial (R$)</label>
+                                <input type="number" id="investAmount" placeholder="10000" required step="0.01" min="0">
                             </div>
                             <div class="form-group">
-                                <label>Período (meses)</label>
-                                <input type="number" id="investPeriod" placeholder="12" required min="1">
+                                <label style="color: rgba(255,255,255,0.9);">Período (meses)</label>
+                                <input type="number" id="investPeriod" placeholder="12" required min="1" max="360">
                             </div>
                             <div class="form-group">
-                                <label>Tipo de Investimento</label>
+                                <label style="color: rgba(255,255,255,0.9);">Tipo de Investimento</label>
                                 <select id="investType" required>
-                                    <option value="">Escolha...</option>
+                                    <option value="">Escolha o tipo...</option>
                                     <option value="poupanca">💰 Poupança (6% a.a.)</option>
-                                    <option value="tesouro">🏦 Tesouro Selic (10,65% a.a.)</option>
+                                    <option value="tesouro_selic">🏦 Tesouro Selic (10,65% a.a.)</option>
                                     <option value="cdb100">📊 CDB 100% CDI (10,65% a.a.)</option>
+                                    <option value="cdb110">📊 CDB 110% CDI (11,72% a.a.)</option>
                                     <option value="cdb120">📊 CDB 120% CDI (12,78% a.a.)</option>
-                                    <option value="acoes">📈 Ações (15% a.a.)</option>
+                                    <option value="lci_lca">🏠 LCI/LCA (9% a.a. isento IR)</option>
+                                    <option value="fundos_di">📈 Fundos DI (9,5% a.a.)</option>
+                                    <option value="acoes">📈 Ações (15% a.a. médio)</option>
+                                    <option value="cripto">₿ Criptomoedas (30% a.a. volátil)</option>
                                 </select>
                             </div>
-                            <button type="submit" class="btn btn-primary">Simular</button>
+                            <button type="submit" class="btn btn-primary">Calcular Retorno</button>
                         </div>
                     </form>
                     <div id="investResults" class="interest-results hidden">
                         <div class="result-grid">
                             <div class="result-item">
                                 <span class="result-label">Valor Investido:</span>
-                                <span class="result-value" id="investInitial">R$ 0,00</span>
+                                <span class="result-value" id="investInitial" style="color: white;">R$ 0,00</span>
                             </div>
                             <div class="result-item">
                                 <span class="result-label">Rendimento Bruto:</span>
-                                <span class="result-value" style="color: var(--success-color);" id="investGross">R$ 0,00</span>
+                                <span class="result-value" style="color: #10b981;" id="investGross">R$ 0,00</span>
                             </div>
                             <div class="result-item">
-                                <span class="result-label">Imposto (IR):</span>
-                                <span class="result-value" style="color: var(--danger-color);" id="investTax">R$ 0,00</span>
+                                <span class="result-label">Imposto de Renda:</span>
+                                <span class="result-value" style="color: #ef4444;" id="investTax">R$ 0,00</span>
                             </div>
                             <div class="result-item">
                                 <span class="result-label">Valor Final Líquido:</span>
-                                <span class="result-value" style="color: var(--primary-color); font-size: 1.8rem;" id="investFinal">R$ 0,00</span>
+                                <span class="result-value" style="color: #10b981; font-size: 2rem;" id="investFinal">R$ 0,00</span>
                             </div>
                         </div>
-                        <canvas id="investChart"></canvas>
-                        <div class="educational-note">
-                            📋 <strong>Imposto de Renda:</strong> Até 180 dias: 22,5% | 181-360 dias: 20% | 361-720 dias: 17,5% | Acima de 720 dias: 15%
+                        <div style="background: rgba(0,0,0,0.3); padding: 1.5rem; border-radius: 8px; margin-top: 2rem;">
+                            <canvas id="investChart"></canvas>
+                        </div>
+                        <div class="educational-note" style="margin-top: 1.5rem; background: rgba(16, 185, 129, 0.2); border-color: #10b981; color: white;">
+                            💡 <strong>Dica Educativa:</strong> O tempo é o melhor aliado dos juros compostos. Invista de forma constante e consciente. Quanto mais tempo seu dinheiro fica investido, maior o efeito exponencial dos rendimentos!
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div style="text-align: center; margin-top: 2rem;">
-                <a href="index.html" class="btn btn-primary">← Voltar ao Dashboard</a>
+            <!-- Tesouro Selic -->
+            <div class="card card-full">
+                <div class="card-header">
+                    <h3>🏦 Tesouro Selic</h3>
+                    <span class="fund-badge" style="background: rgba(16, 185, 129, 0.2); color: #10b981;">Baixo Risco</span>
+                </div>
+                <div class="card-body">
+                    <p style="color: var(--text-secondary); line-height: 1.8; margin-bottom: 1.5rem;">
+                        O Tesouro Selic é um título público federal que acompanha a taxa básica de juros da economia (Selic). 
+                        É considerado o investimento mais seguro do Brasil, pois é garantido pelo governo federal.
+                    </p>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
+                        <div style="background: var(--bg-light); padding: 1.5rem; border-radius: var(--border-radius-sm);">
+                            <h4 style="color: var(--primary-color); margin-bottom: 0.5rem;">✅ Como Funciona</h4>
+                            <p style="color: var(--text-secondary); font-size: 0.95rem;">
+                                Você empresta dinheiro ao governo e recebe de volta com juros atrelados à taxa Selic. 
+                                O rendimento é diário e o resgate pode ser feito a qualquer momento.
+                            </p>
+                        </div>
+                        
+                        <div style="background: var(--bg-light); padding: 1.5rem; border-radius: var(--border-radius-sm);">
+                            <h4 style="color: var(--success-color); margin-bottom: 0.5rem;">💪 Vantagens</h4>
+                            <ul style="color: var(--text-secondary); font-size: 0.95rem; margin-left: 1.2rem; line-height: 1.8;">
+                                <li>Liquidez diária (resgate D+1)</li>
+                                <li>Aplicação mínima baixa (~R$30)</li>
+                                <li>Menor risco do mercado</li>
+                                <li>Ideal para reserva de emergência</li>
+                            </ul>
+                        </div>
+                        
+                        <div style="background: var(--bg-light); padding: 1.5rem; border-radius: var(--border-radius-sm);">
+                            <h4 style="color: var(--danger-color); margin-bottom: 0.5rem;">⚠️ Desvantagens</h4>
+                            <ul style="color: var(--text-secondary); font-size: 0.95rem; margin-left: 1.2rem; line-height: 1.8;">
+                                <li>Rentabilidade limitada à Selic</li>
+                                <li>Incidência de Imposto de Renda</li>
+                                <li>Taxa da corretora (em alguns casos)</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div style="background: rgba(16, 185, 129, 0.1); padding: 1.5rem; border-radius: var(--border-radius-sm); border-left: 4px solid var(--success-color);">
+                        <p style="color: var(--text-primary); margin-bottom: 0.5rem;"><strong>📊 Rentabilidade Atual:</strong> ~10,65% ao ano (Selic em 2025)</p>
+                        <p style="color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 0.5rem;"><strong>🎯 Público Indicado:</strong> Iniciantes, conservadores e quem busca liquidez</p>
+                        <p style="color: var(--text-secondary); font-size: 0.95rem;"><strong>💰 Exemplo:</strong> R$ 10.000 investidos por 12 meses = ~R$ 10.852 líquidos (após IR de 20%)</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CDB -->
+            <div class="card card-full">
+                <div class="card-header">
+                    <h3>📊 CDB - Certificado de Depósito Bancário</h3>
+                    <span class="fund-badge" style="background: rgba(59, 130, 246, 0.2); color: #3b82f6;">Baixo Risco</span>
+                </div>
+                <div class="card-body">
+                    <p style="color: var(--text-secondary); line-height: 1.8; margin-bottom: 1.5rem;">
+                        O CDB é um título emitido por bancos para captar recursos. Ao investir, você empresta dinheiro ao banco 
+                        e recebe juros em troca. A rentabilidade geralmente é atrelada ao CDI (Certificado de Depósito Interbancário).
+                    </p>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmin(280px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
+                        <div style="background: var(--bg-light); padding: 1.5rem; border-radius: var(--border-radius-sm);">
+                            <h4 style="color: var(--primary-color); margin-bottom: 0.5rem;">✅ Como Funciona</h4>
+                            <p style="color: var(--text-secondary); font-size: 0.95rem;">
+                                Bancos emitem CDBs com diferentes percentuais do CDI (100%, 110%, 120% ou mais). 
+                                Quanto maior o percentual, maior o rendimento. Protegido pelo FGC até R$ 250 mil.
+                            </p>
+                        </div>
+                        
+                        <div style="background: var(--bg-light); padding: 1.5rem; border-radius: var(--border-radius-sm);">
+                            <h4 style="color: var(--success-color); margin-bottom: 0.5rem;">💪 Vantagens</h4>
+                            <ul style="color: var(--text-secondary); font-size: 0.95rem; margin-left: 1.2rem; line-height: 1.8;">
+                                <li>Rentabilidade superior à poupança</li>
+                                <li>Garantia do FGC (até R$ 250 mil)</li>
+                                <li>Variedade de prazos e taxas</li>
+                                <li>Previsibilidade de retorno</li>
+                            </ul>
+                        </div>
+                        
+                        <div style="background: var(--bg-light); padding: 1.5rem; border-radius: var(--border-radius-sm);">
+                            <h4 style="color: var(--danger-color); margin-bottom: 0.5rem;">⚠️ Desvantagens</h4>
+                            <ul style="color: var(--text-secondary); font-size: 0.95rem; margin-left: 1.2rem; line-height: 1.8;">
+                                <li>Liquidez restrita (alguns têm carência)</li>
+                                <li>Imposto de Renda regressivo</li>
+                                <li>Risco de crédito do banco emissor</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div style="background: rgba(59, 130, 246, 0.1); padding: 1.5rem; border-radius: var(--border-radius-sm); border-left: 4px solid var(--accent-color);">
+                        <p style="color: var(--text-primary); margin-bottom: 0.5rem;"><strong>📊 Rentabilidade:</strong> 100% a 130% do CDI (~10,65% a 13,85% a.a.)</p>
+                        <p style="color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 0.5rem;"><strong>🎯 Público Indicado:</strong> Investidores conservadores buscando mais retorno que a poupança</p>
+                        <p style="color: var(--text-secondary); font-size: 0.95rem;"><strong>💰 Exemplo:</strong> R$ 10.000 em CDB 120% CDI por 12 meses = ~R$ 10.941 líquidos (após IR)</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CDI -->
+            <div class="card card-full">
+                <div class="card-header">
+                    <h3>📈 CDI - Certificado de Depósito Interbancário</h3>
+                    <span class="fund-badge" style="background: rgba(245, 158, 11, 0.2); color: #f59e0b;">Referência</span>
+                </div>
+                <div class="card-body">
+                    <p style="color: var(--text-secondary); line-height: 1.8; margin-bottom: 1.5rem;">
+                        O CDI não é um investimento direto, mas sim uma <strong>taxa de referência</strong> usada para precificar 
+                        investimentos de renda fixa. É a taxa média dos empréstimos entre bancos e acompanha muito de perto a Taxa Selic.
+                    </p>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
+                        <div style="background: var(--bg-light); padding: 1.5rem; border-radius: var(--border-radius-sm);">
+                            <h4 style="color: var(--primary-color); margin-bottom: 0.5rem;">✅ O que é</h4>
+                            <p style="color: var(--text-secondary); font-size: 0.95rem;">
+                                Taxa de juros média das operações de empréstimo entre bancos. Serve como benchmark 
+                                (referência) para CDBs, LCIs, LCAs e outros produtos de renda fixa.
+                            </p>
+                        </div>
+                        
+                        <div style="background: var(--bg-light); padding: 1.5rem; border-radius: var(--border-radius-sm);">
+                            <h4 style="color: var(--secondary-color); margin-bottom: 0.5rem;">📊 Como é usado</h4>
+                            <p style="color: var(--text-secondary); font-size: 0.95rem;">
+                                Investimentos costumam pagar um percentual do CDI. Por exemplo: "CDB 110% do CDI" 
+                                significa que rende 10% a mais que o CDI. Quanto maior o percentual, melhor para você.
+                            </p>
+                        </div>
+                        
+                        <div style="background: var(--bg-light); padding: 1.5rem; border-radius: var(--border-radius-sm);">
+                            <h4 style="color: var(--success-color); margin-bottom: 0.5rem;">💡 Por que importa</h4>
+                            <p style="color: var(--text-secondary); font-size: 0.95rem;">
+                                Entender o CDI ajuda a comparar investimentos. Um CDB 100% CDI rende praticamente igual 
+                                ao Tesouro Selic. Já um CDB 120% CDI rende 20% a mais!
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div style="background: rgba(245, 158, 11, 0.1); padding: 1.5rem; border-radius: var(--border-radius-sm); border-left: 4px solid var(--secondary-color);">
+                        <p style="color: var(--text-primary); margin-bottom: 0.5rem;"><strong>📊 Taxa Atual:</strong> ~10,65% ao ano (muito próxima da Selic)</p>
+                        <p style="color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 0.5rem;"><strong>🎯 Importância:</strong> Benchmark para comparar rentabilidade de renda fixa</p>
+                        <p style="color: var(--text-secondary); font-size: 0.95rem;"><strong>💡 Dica:</strong> Sempre busque investimentos acima de 100% do CDI para ter rentabilidade superior</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tesouro Direto -->
+            <div class="card card-full">
+                <div class="card-header">
+                    <h3>🏛️ Tesouro Direto (IPCA+ e Prefixado)</h3>
+                    <span class="fund-badge" style="background: rgba(16, 185, 129, 0.2); color: #10b981;">Baixo Risco</span>
+                </div>
+                <div class="card-body">
+                    <p style="color: var(--text-secondary); line-height: 1.8; margin-bottom: 1.5rem;">
+                        Além do Tesouro Selic, existem outros tipos de títulos públicos com diferentes características de rentabilidade e prazo.
+                    </p>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
+                        <div style="background: var(--bg-light); padding: 1.5rem; border-radius: var(--border-radius-sm);">
+                            <h4 style="color: var(--primary-color); margin-bottom: 0.5rem;">📊 Tesouro IPCA+</h4>
+                            <p style="color: var(--text-secondary); font-size: 0.95rem;">
+                                Rende inflação (IPCA) + taxa fixa. Exemplo: IPCA + 6% a.a. Protege seu poder de compra 
+                                e ainda dá ganho real. Ideal para objetivos de longo prazo (aposentadoria, compra de imóvel).
+                            </p>
+                        </div>
+                        
+                        <div style="background: var(--bg-light); padding: 1.5rem; border-radius: var(--border-radius-sm);">
+                            <h4 style="color: var(--accent-color); margin-bottom: 0.5rem;">📊 Tesouro Prefixado</h4>
+                            <p style="color: var(--text-secondary); font-size: 0.95rem;">
+                                Taxa fixa definida no momento da compra. Você sabe exatamente quanto vai receber no vencimento. 
+                                Bom para quem quer previsibilidade total e acredita que os juros vão cair.
+                            </p>
+                        </div>
+                        
+                        <div style="background: var(--bg-light); padding: 1.5rem; border-radius: var(--border-radius-sm);">
+                            <h4 style="color: var(--success-color); margin-bottom: 0.5rem;">💡 Quando usar cada um</h4>
+                            <ul style="color: var(--text-secondary); font-size: 0.95rem; margin-left: 1.2rem; line-height: 1.8;">
+                                <li><strong>Selic:</strong> Emergência e curto prazo</li>
+                                <li><strong>IPCA+:</strong> Longo prazo e proteção</li>
+                                <li><strong>Prefixado:</strong> Médio prazo e previsibilidade</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div style="background: rgba(16, 185, 129, 0.1); padding: 1.5rem; border-radius: var(--border-radius-sm); border-left: 4px solid var(--success-color);">
+                        <p style="color: var(--text-primary); margin-bottom: 0.5rem;"><strong>📊 Rentabilidade:</strong> IPCA+ 6% a.a. | Prefixado 11-12% a.a.</p>
+                        <p style="color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 0.5rem;"><strong>🎯 Público Indicado:</strong> Investidores com objetivos de médio e longo prazo</p>
+                        <p style="color: var(--text-secondary); font-size: 0.95rem;"><strong>⚠️ Atenção:</strong> Resgate antecipado pode gerar perdas. Invista apenas o que não vai precisar antes do vencimento.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- LCI e LCA -->
+            <div class="card card-full">
+                <div class="card-header">
+                    <h3>🏠 LCI e LCA - Letras de Crédito</h3>
+                    <span class="fund-badge" style="background: rgba(16, 185, 129, 0.2); color: #10b981;">Isentos de IR</span>
+                </div>
+                <div class="card-body">
+                    <p style="color: var(--text-secondary); line-height: 1.8; margin-bottom: 1.5rem;">
+                        LCI (Letra de Crédito Imobiliário) e LCA (Letra de Crédito do Agronegócio) são títulos bancários 
+                        <strong>isentos de Imposto de Renda</strong>, vinculados aos setores imobiliário e agrícola.
+                    </p>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
+                        <div style="background: var(--bg-light); padding: 1.5rem; border-radius: var(--border-radius-sm);">
+                            <h4 style="color: var(--primary-color); margin-bottom: 0.5rem;">✅ Como Funciona</h4>
+                            <p style="color: var(--text-secondary); font-size: 0.95rem;">
+                                Funcionam como CDBs, mas os recursos captados são direcionados para financiamento imobiliário (LCI) 
+                                ou do agronegócio (LCA). A isenção de IR é um incentivo do governo para esses setores.
+                            </p>
+                        </div>
+                        
+                        <div style="background: var(--bg-light); padding: 1.5rem; border-radius: var(--border-radius-sm);">
+                            <h4 style="color: var(--success-color); margin-bottom: 0.5rem;">💪 Vantagens</h4>
+                            <ul style="color: var(--text-secondary); font-size: 0.95rem; margin-left: 1.2rem; line-height: 1.8;">
+                                <li><strong>Isenção total de IR!</strong></li>
+                                <li>Garantia do FGC (até R$ 250 mil)</li>
+                                <li>Rentabilidade atrativa (85-95% CDI)</li>
+                                <li>Risco baixo</li>
+                            </ul>
+                        </div>
+                        
+                        <div style="background: var(--bg-light); padding: 1.5rem; border-radius: var(--border-radius-sm);">
+                            <h4 style="color: var(--danger-color); margin-bottom: 0.5rem;">⚠️ Desvantagens</h4>
+                            <ul style="color: var(--text-secondary); font-size: 0.95rem; margin-left: 1.2rem; line-height: 1.8;">
+                                <li>Aplicação mínima mais alta (R$ 1.000+)</li>
+                                <li>Prazo de carência (geralmente 90 dias)</li>
+                                <li>Menos liquidez que CDBs</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div style="background: rgba(16, 185, 129, 0.1); padding: 1.5rem; border-radius: var(--border-radius-sm); border-left: 4px solid var(--success-color);">
+                        <p style="color: var(--text-primary); margin-bottom: 0.5rem;"><strong>📊 Rentabilidade:</strong> 85% a 95% do CDI (~9% a 10,1% a.a.) SEM IR!</p>
+                        <p style="color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 0.5rem;"><strong>🎯 Público Indicado:</strong> Quem busca renda fixa sem pagar imposto e pode esperar o prazo</p>
+                        <p style="color: var(--text-secondary); font-size: 0.95rem;"><strong>💰 Exemplo:</strong> R$ 10.000 em LCI 90% CDI por 12 meses = R$ 10.900 líquidos (ZERO imposto!)</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Fundos de Investimento -->
+            <div class="card card-full">
+                <div class="card-header">
+                    <h3>📦 Fundos de Investimento</h3>
+                    <span class="fund-badge" style="background: rgba(59, 130, 246, 0.2); color: #3b82f6;">Risco Variável</span>
+                </div>
+                <div class="card-body">
+                    <p style="color: var(--text-secondary); line-height: 1.8; margin-bottom: 1.5rem;">
+                        Fundos de investimento são carteiras geridas profissionalmente onde você investe junto com outros cotistas. 
+                        Existem diversos tipos, cada um com estratégia e risco diferentes.
+                    </p>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
+                        <div style="background: var(--bg-light); padding: 1.5rem; border-radius: var(--border-radius-sm);">
+                            <h4 style="color: var(--success-color); margin-bottom: 0.5rem;">📊 Fundos DI (Renda Fixa)</h4>
+                            <p style="color: var(--text-secondary); font-size: 0.95rem;">
+                                Investem em títulos atrelados ao CDI. Baixo risco e boa liquidez. Rentabilidade entre 90-100% do CDI. 
+                                Alternativa prática para quem não quer escolher títulos individualmente.
+                            </p>
+                        </div>
+                        
+                        <div style="background: var(--bg-light); padding: 1.5rem; border-radius: var(--border-radius-sm);">
+                            <h4 style="color: var(--accent-color); margin-bottom: 0.5rem;">📈 Fundos de Ações</h4>
+                            <p style="color: var(--text-secondary); font-size: 0.95rem;">
+                                Investem em ações de empresas. Alto risco e potencial de ganho. Gestão profissional facilita diversificação. 
+                                Ideal para quem quer renda variável sem escolher ações individualmente.
+                            </p>
+                        </div>
+                        
+                        <div style="background: var(--bg-light); padding: 1.5rem; border-radius: var(--border-radius-sm);">
+                            <h4 style="color: var(--secondary-color); margin-bottom: 0.5rem;">🏢 Fundos Imobiliários (FIIs)</h4>
+                            <p style="color: var(--text-secondary); font-size: 0.95rem;">
+                                Investem em imóveis ou títulos imobiliários. Pagam dividendos mensais isentos de IR. 
+                                Risco médio. Boa forma de investir em imóveis sem precisar comprar um.
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div style="background: rgba(59, 130, 246, 0.1); padding: 1.5rem; border-radius: var(--border-radius-sm); border-left: 4px solid var(--accent-color);">
+                        <p style="color: var(--text-primary); margin-bottom: 0.5rem;"><strong>📊 Rentabilidade:</strong> Varia muito (5% a 20%+ a.a. dependendo do tipo)</p>
+                        <p style="color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 0.5rem;"><strong>🎯 Público Indicado:</strong> Quem busca gestão profissional e diversificação automática</p>
+                        <p style="color: var(--text-secondary); font-size: 0.95rem;"><strong>⚠️ Atenção:</strong> Fique atento às taxas de administração e performance que podem reduzir seus ganhos!</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ações -->
+            <div class="card card-full">
+                <div class="card-header">
+                    <h3>📈 Ações - Renda Variável</h3>
+                    <span class="fund-badge" style="background: rgba(245, 158, 11, 0.2); color: #f59e0b;">Alto Risco</span>
+                </div>
+                <div class="card-body">
+                    <p style="color: var(--text-secondary); line-height: 1.8; margin-bottom: 1.5rem;">
+                        Ações são pequenas partes de empresas. Ao comprar ações, você se torna sócio e pode lucrar com 
+                        a valorização das ações e dividendos distribuídos. É o investimento de maior potencial de ganho, 
+                        mas também de maior risco e volatilidade.
+                    </p>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
+                        <div style="background: var(--bg-light); padding: 1.5rem; border-radius: var(--border-radius-sm);">
+                            <h4 style="color: var(--primary-color); margin-bottom: 0.5rem;">✅ Como Funciona</h4>
+                            <p style="color: var(--text-secondary); font-size: 0.95rem;">
+                                Você compra ações na bolsa (B3) através de uma corretora. O preço oscila conforme oferta e demanda. 
+                                Empresas lucrativas distribuem dividendos aos acionistas periodicamente.
+                            </p>
+                        </div>
+                        
+                        <div style="background: var(--bg-light); padding: 1.5rem; border-radius: var(--border-radius-sm);">
+                            <h4 style="color: var(--success-color); margin-bottom: 0.5rem;">💪 Vantagens</h4>
+                            <ul style="color: var(--text-secondary); font-size: 0.95rem; margin-left: 1.2rem; line-height: 1.8;">
+                                <li>Alto potencial de retorno</li>
+                                <li>Dividendos isentos de IR</li>
+                                <li>Liquidez diária</li>
+                                <li>Proteção contra inflação</li>
+                                <li>Participa do crescimento de empresas</li>
+                            </ul>
+                        </div>
+                        
+                        <div style="background: var(--bg-light); padding: 1.5rem; border-radius: var(--border-radius-sm);">
+                            <h4 style="color: var(--danger-color); margin-bottom: 0.5rem;">⚠️ Desvantagens</h4>
+                            <ul style="color: var(--text-secondary); font-size: 0.95rem; margin-left: 1.2rem; line-height: 1.8;">
+                                <li>Alta volatilidade (oscila muito)</li>
+                                <li>Risco de perda do capital</li>
+                                <li>Exige estudo e acompanhamento</li>
+                                <li>IR sobre ganho de capital (15-20%)</li>
+                                <li>Emoção pode atrapalhar decisões</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div style="background: rgba(245, 158, 11, 0.1); padding: 1.5rem; border-radius: var(--border-radius-sm); border-left: 4px solid var(--secondary-color);">
+                        <p style="color: var(--text-primary); margin-bottom: 0.5rem;"><strong>📊 Rentabilidade:</strong> Média histórica de 12-15% a.a., mas varia muito ano a ano</p>
+                        <p style="color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 0.5rem;"><strong>🎯 Público Indicado:</strong> Investidores experientes, com visão de longo prazo (5+ anos) e tolerância a risco</p>
+                        <p style="color: var(--text-secondary); font-size: 0.95rem;"><strong>💡 Dica:</strong> Nunca invista em ações dinheiro que você vai precisar no curto prazo. Diversifique entre várias empresas e setores!</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Criptomoedas -->
+            <div class="card card-full">
+                <div class="card-header">
+                    <h3>₿ Criptomoedas</h3>
+                    <span class="fund-badge" style="background: rgba(239, 68, 68, 0.2); color: #ef4444;">Risco Extremo</span>
+                </div>
+                <div class="card-body">
+                    <p style="color: var(--text-secondary); line-height: 1.8; margin-bottom: 1.5rem;">
+                        Criptomoedas são moedas digitais descentralizadas baseadas em blockchain. Bitcoin e Ethereum são as mais conhecidas. 
+                        Oferecem alto potencial de ganho, mas também <strong>altíssimo risco e volatilidade extrema</strong>.
+                    </p>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
+                        <div style="background: var(--bg-light); padding: 1.5rem; border-radius: var(--border-radius-sm);">
+                            <h4 style="color: var(--primary-color); margin-bottom: 0.5rem;">✅ Como Funciona</h4>
+                            <p style="color: var(--text-secondary); font-size: 0.95rem;">
+                                São negociadas em exchanges 24/7. Não são controladas por governos ou bancos. 
+                                Funcionam através de tecnologia blockchain, garantindo segurança e transparência nas transações.
+                            </p>
+                        </div>
+                        
+                        <div style="background: var(--bg-light); padding: 1.5rem; border-radius: var(--border-radius-sm);">
+                            <h4 style="color: var(--success-color); margin-bottom: 0.5rem;">💪 Vantagens</h4>
+                            <ul style="color: var(--text-secondary); font-size: 0.95rem; margin-left: 1.2rem; line-height: 1.8;">
+                                <li>Altíssimo potencial de valorização</li>
+                                <li>Descentralização</li>
+                                <li>Negociação 24/7</li>
+                                <li>Tecnologia inovadora</li>
+                            </ul>
+                        </div>
+                        
+                        <div style="background: var(--bg-light); padding: 1.5rem; border-radius: var(--border-radius-sm);">
+                            <h4 style="color: var(--danger-color); margin-bottom: 0.5rem;">⚠️ Desvantagens</h4>
+                            <ul style="color: var(--text-secondary); font-size: 0.95rem; margin-left: 1.2rem; line-height: 1.8;">
+                                <li><strong>Volatilidade extrema</strong> (±20% em um dia)</li>
+                                <li>Risco de perda total</li>
+                                <li>Sem garantia ou proteção legal</li>
+                                <li>Exchanges podem quebrar</li>
+                                <li>Regulamentação incerta</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div style="background: rgba(239, 68, 68, 0.1); padding: 1.5rem; border-radius: var(--border-radius-sm); border-left: 4px solid var(--danger-color);">
+                        <p style="color: var(--text-primary); margin-bottom: 0.5rem;"><strong>📊 Rentabilidade:</strong> Extremamente variável (pode render 100%+ ou perder 80% em um ano)</p>
+                        <p style="color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 0.5rem;"><strong>🎯 Público Indicado:</strong> Investidores muito experientes e com alta tolerância a risco</p>
+                        <p style="color: var(--text-secondary); font-size: 0.95rem;"><strong>⚠️ ATENÇÃO:</strong> NUNCA invista mais de 5% do seu patrimônio em criptomoedas. Só invista o que pode perder sem comprometer sua vida financeira!</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Poupança -->
+            <div class="card card-full">
+                <div class="card-header">
+                    <h3>🐷 Poupança</h3>
+                    <span class="fund-badge" style="background: rgba(148, 163, 184, 0.2); color: #94a3b8;">Baixíssimo Risco</span>
+                </div>
+                <div class="card-body">
+                    <p style="color: var(--text-secondary); line-height: 1.8; margin-bottom: 1.5rem;">
+                        A poupança é o investimento mais tradicional e conhecido do Brasil. Apesar da segurança e praticidade, 
+                        é o que oferece <strong>menor rentabilidade</strong> entre todas as opções de investimento.
+                    </p>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
+                        <div style="background: var(--bg-light); padding: 1.5rem; border-radius: var(--border-radius-sm);">
+                            <h4 style="color: var(--primary-color); margin-bottom: 0.5rem;">✅ Como Funciona</h4>
+                            <p style="color: var(--text-secondary); font-size: 0.95rem;">
+                                Rendimento mensal no aniversário do depósito. Fórmula: 0,5% ao mês + TR (Taxa Referencial, 
+                                geralmente próxima de zero). Totalmente isenta de Imposto de Renda.
+                            </p>
+                        </div>
+                        
+                        <div style="background: var(--bg-light); padding: 1.5rem; border-radius: var(--border-radius-sm);">
+                            <h4 style="color: var(--success-color); margin-bottom: 0.5rem;">💪 Vantagens</h4>
+                            <ul style="color: var(--text-secondary); font-size: 0.95rem; margin-left: 1.2rem; line-height: 1.8;">
+                                <li>Isenta de Imposto de Renda</li>
+                                <li>Garantia do FGC (até R$ 250 mil)</li>
+                                <li>Liquidez imediata</li>
+                                <li>Simplicidade total</li>
+                                <li>Sem aplicação mínima</li>
+                            </ul>
+                        </div>
+                        
+                        <div style="background: var(--bg-light); padding: 1.5rem; border-radius: var(--border-radius-sm);">
+                            <h4 style="color: var(--danger-color); margin-bottom: 0.5rem;">⚠️ Desvantagens</h4>
+                            <ul style="color: var(--text-secondary); font-size: 0.95rem; margin-left: 1.2rem; line-height: 1.8;">
+                                <li><strong>Rentabilidade muito baixa</strong></li>
+                                <li>Perde para inflação em muitos períodos</li>
+                                <li>Rende menos que Tesouro Selic</li>
+                                <li>Oportunidade perdida de ganhos maiores</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div style="background: rgba(148, 163, 184, 0.1); padding: 1.5rem; border-radius: var(--border-radius-sm); border-left: 4px solid var(--text-muted);">
+                        <p style="color: var(--text-primary); margin-bottom: 0.5rem;"><strong>📊 Rentabilidade:</strong> ~6% ao ano (0,5% ao mês + TR)</p>
+                        <p style="color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 0.5rem;"><strong>🎯 Público Indicado:</strong> Quem busca extrema simplicidade e não se importa com rentabilidade baixa</p>
+                        <p style="color: var(--text-secondary); font-size: 0.95rem;"><strong>💡 Dica:</strong> O Tesouro Selic rende quase o dobro da poupança com a mesma segurança! Considere migrar para ter mais retorno.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Comparativo Final -->
+            <div class="card card-full" style="background: linear-gradient(135deg, #1e3a8a 0%, #0f172a 100%); border: none;">
+                <div class="card-header">
+                    <h3>📊 Comparativo de Rentabilidade</h3>
+                </div>
+                <div class="card-body">
+                    <p style="color: rgba(255,255,255,0.9); line-height: 1.8; margin-bottom: 1.5rem;">
+                        Veja como R$ 10.000 crescem em 12 meses em diferentes investimentos (valores já com IR descontado onde aplicável):
+                    </p>
+                    <div style="background: rgba(0,0,0,0.3); padding: 1.5rem; border-radius: 8px;">
+                        <canvas id="comparisonChart"></canvas>
+                    </div>
+                    <div class="educational-note" style="margin-top: 1.5rem; background: rgba(16, 185, 129, 0.2); border-color: #10b981; color: white;">
+                        💡 <strong>Conclusão:</strong> A poupança é o investimento menos rentável. Com a mesma segurança, você pode ganhar muito mais no Tesouro Selic ou CDBs. 
+                        Faça seu dinheiro trabalhar melhor para você!
+                    </div>
+                </div>
+            </div>
+
+            <div style="text-align: center; margin-top: 3rem;">
+                <a href="index.html" class="btn btn-primary" style="padding: 1rem 3rem; font-size: 1.1rem;">← Voltar ao Dashboard</a>
             </div>
         </div>
     </main>
