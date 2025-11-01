@@ -805,3 +805,19 @@ body {
         left: 1rem;
     }
 }
+
+/* AJUSTE RÁPIDO DO GRÁFICO DE JUROS */
+#interestChart {
+    max-height: 250px !important;
+}
+
+#interestResults canvas {
+    max-height: 250px !important;
+}
+
+@media (max-width: 768px) {
+    #interestChart,
+    #interestResults canvas {
+        max-height: 200px !important;
+    }
+}
